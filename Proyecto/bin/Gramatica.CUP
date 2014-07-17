@@ -1,0 +1,92 @@
+//Codigo empaquetamiento
+//Codigo Usuario
+//Lista Simbolos
+
+terminal		Integer NUMERO;
+terminal 		Date FECHA;
+terminal 		String CADENA,COMILLAS;
+terminal		SUMA, RESTA, MULTI, IPAREN, DPAREN, EQ, SEL, PRO, UNI, DIF;
+terminal 		COMA, PROC, INT, AND, NOT, OR, DIFERENTE, MAYOR, MENOR;
+non terminal    expe, exp1, exp2, exp3, expe2, exp11, exp12, exp13, exp14, exp15, exp16;
+non terminal    exp21, exp22, exp23, oplog, opcomp, opsure, comp, opm, sesion;
+
+
+sesion ::=  	expe {: System.out.println("Ecuacion Con Sintaxis Correcta."); :}
+			| 	expe {: System.out.println("Ecuacion Con Sintaxis Correcta."); :} sesion
+			;
+
+expe ::= 		exp1 
+			| 	exp2 
+			| 	exp3
+			;
+
+expe2 ::= 		CADENA
+			|	expe
+			;
+
+exp1 ::= 		PRO exp16 IPAREN expe2 DPAREN
+			;
+
+exp16 ::= 		exp16 COMA exp11 
+			|	exp11
+			;
+
+exp11 ::= 		CADENA opsure exp13 
+			|	exp12
+			;
+
+exp12 ::=   	CADENA MULTI exp13
+			|	exp13
+			;
+
+opsure ::=   	SUMA
+			|	RESTA;
+
+exp13 ::= 		exp13 opsure exp14
+			|	exp14
+			;
+
+exp14 ::=		exp14 MULTI exp15
+			| 	exp15
+			;
+
+exp15 ::=		NUMERO
+			;
+
+exp2 ::= 		SEL comp IPAREN expe2 DPAREN
+			;
+
+comp ::= 		NOT exp21
+			|	exp21
+			;
+
+exp21 ::=		CADENA opcomp exp22
+			;
+
+opcomp ::= 		EQ
+			|	DIFERENTE
+			|	MAYOR
+			|	MENOR
+			;
+
+exp22 ::=		exp23 oplog comp
+			| 	exp23
+			;
+
+oplog ::=		AND
+			|	OR
+			;
+
+exp23 ::=		COMILLAS CADENA COMILLAS
+			|	NUMERO
+			|	FECHA
+			;	
+
+exp3 ::= 		IPAREN expe2 DPAREN opm IPAREN expe2 DPAREN
+			;
+
+opm ::=			UNI
+			|	DIF
+			|	PROC
+			| 	INT
+			;	
