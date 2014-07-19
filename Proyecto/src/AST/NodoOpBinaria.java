@@ -3,22 +3,22 @@ package AST;
 
 public class NodoOpBinaria extends NodoOperacion {
 
-	NoboBase operandoIzquierdo;
-	NoboBase operandoDerecho;
-	public NoboBase getOperandoIzquierdo() {
+	NodoBase operandoIzquierdo;
+	NodoBase operandoDerecho;
+	public NodoBase getOperandoIzquierdo() {
 		return operandoIzquierdo;
 	}
-	public void setOperandoIzquierdo(NoboBase operandoIzquierdo) {
+	public void setOperandoIzquierdo(NodoBase operandoIzquierdo) {
 		this.operandoIzquierdo = operandoIzquierdo;
 	}
-	public NoboBase getOperandoDerecho() {
+	public NodoBase getOperandoDerecho() {
 		return operandoDerecho;
 	}
-	public void setOperandoDerecho(NoboBase operandoDerecho) {
+	public void setOperandoDerecho(NodoBase operandoDerecho) {
 		this.operandoDerecho = operandoDerecho;
 	}
-	public NodoOpBinaria(String tipo, NoboBase operandoIzquierdo,
-			NoboBase operandoDerecho) {
+	public NodoOpBinaria(String tipo, NodoBase operandoIzquierdo,
+			NodoBase operandoDerecho) {
 		super(tipo);
 		this.operandoIzquierdo = operandoIzquierdo;
 		this.operandoDerecho = operandoDerecho;

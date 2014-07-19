@@ -1,6 +1,6 @@
 package AST;
 
-public class NodoOperacion extends NoboBase {
+public class NodoOperacion extends NodoBase {
 	
 	String tipo;
 

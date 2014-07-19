@@ -2,7 +2,7 @@ package AST;
 
 import java.util.Date;
 
-public class NodoFecha extends NoboBase{
+public class NodoFecha extends NodoBase{
 	Date fecha;
 
 	public Date getFecha() {

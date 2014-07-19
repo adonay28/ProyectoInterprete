@@ -1,6 +1,6 @@
 package AST;
 
-public class NodoCadena extends NoboBase{
+public class NodoCadena extends NodoBase{
 	String cadena;
 
 	public String getCadena() {

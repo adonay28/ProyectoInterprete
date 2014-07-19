@@ -8,85 +8,214 @@ terminal 		String CADENA,COMILLAS;
 terminal		SUMA, RESTA, MULTI, IPAREN, DPAREN, EQ, SEL, PRO, UNI, DIF;
 terminal 		COMA, PROC, INT, AND, NOT, OR, DIFERENTE, MAYOR, MENOR;
 non terminal    expe, exp1, exp2, exp3, expe2, exp11, exp12, exp13, exp14, exp15, exp16;
-non terminal    exp21, exp22, exp23, oplog, opcomp, opsure, comp, opm, sesion;
+non terminal    exp22, exp23, exp24, exp25, oplog, opcomp, opsure, opm, sesion, ecuacion;
 
 
-sesion ::=  	expe {: System.out.println("Ecuacion Con Sintaxis Correcta."); :}
-			| 	expe {: System.out.println("Ecuacion Con Sintaxis Correcta."); :} sesion
+sesion ::=  	ecuacion 
+			| 	ecuacion sesion
 			;
 
-expe ::= 		exp1 
-			| 	exp2 
-			| 	exp3
+ecuacion ::= 	expe:v 
+				{: 
+					System.out.println("AST construido correctamente");
+				:}
 			;
 
-expe2 ::= 		CADENA
-			|	expe
+expe ::= 		exp1:a
+				{:
+					RESULT=a;
+				:}
+			| 	exp2:b
+				{:
+					RESULT=b;
+				:}
+			| 	exp3:e
+				{:
+					RESULT=e;
+				:}
 			;
 
-exp1 ::= 		PRO exp16 IPAREN expe2 DPAREN
+expe2 ::= 		CADENA:cad
+				{:
+					RESULT=new NodoCadena(cad);
+				:}
+			|	expe:e
+				{:
+					RESULT=e;
+				:}
 			;
 
-exp16 ::= 		exp16 COMA exp11 
-			|	exp11
+exp1 ::= 		PRO exp16:a IPAREN expe2:b DPAREN
+				{:
+					RESULT=new NodoProyeccion(a,b);
+				:}
 			;
 
-exp11 ::= 		CADENA opsure exp13 
-			|	exp12
+exp16 ::= 		exp11:a COMA exp16:b 
+				{:
+					RESULT=new NodoComa(a,b);
+				:}
+			|	exp11:e
+				{:
+					RESULT=e;
+				:}
 			;
 
-exp12 ::=   	CADENA MULTI exp13
-			|	exp13
+exp11 ::= 		CADENA:cad opsure:op exp13:b 
+				{:
+					RESULT=new NodoOpBinaria(op,new NodoCadena(cad),b);
+				:}
+			|	exp12:e
+				{:
+					RESULT=e;
+				:}
+			|	CADENA:e
+				{:
+					RESULT=new NodoCadena(e);
+				:}
+			;
+
+exp12 ::=   	CADENA:cad MULTI exp13:b
+				{:
+					RESULT=new NodoOpBinaria("*",new NodoCadena(cad),b);
+				:}
+			|	exp13:e
+				{:
+					RESULT=e;
+				:}
 			;
 
 opsure ::=   	SUMA
-			|	RESTA;
-
-exp13 ::= 		exp13 opsure exp14
-			|	exp14
+				{:
+					RESULT="+";
+				:}
+			|	RESTA
+				{:
+					RESULT="-";
+				:}
 			;
 
-exp14 ::=		exp14 MULTI exp15
-			| 	exp15
+exp13 ::= 		exp13:a opsure:op exp14:b
+				{:
+					RESULT=new NodoOpBinaria(op,a,b);
+				:}
+			|	exp14:e
+				{:
+					RESULT=e;
+				:}
 			;
 
-exp15 ::=		NUMERO
+exp14 ::=		exp14:a MULTI exp15:b
+				{:
+					RESULT=new NodoOpBinaria("*",a,b);
+				:}
+			| 	exp15:e
+				{:
+					RESULT=e;
+				:}
 			;
 
-exp2 ::= 		SEL comp IPAREN expe2 DPAREN
+exp15 ::=		NUMERO:e
+				{:
+					RESULT=new NodoNumero(e);
+				:}
 			;
 
-comp ::= 		NOT exp21
-			|	exp21
+exp2 ::= 		SEL exp22:a IPAREN expe2:b DPAREN
+				{:
+					RESULT=new NodoSeleccion(a,b);
+				:}
 			;
 
-exp21 ::=		CADENA opcomp exp22
+exp22 ::=		exp23:a oplog:op exp22:b
+				{:
+					RESULT=new NodoOpAO(op,a,b);
+				:}
+			| 	exp23:e
+				{:
+					RESULT=e;
+				:}
+			;
+
+exp23 ::= 		NOT exp23:a
+				{:
+					RESULT=new NodoOpNot(a);
+				:}
+			|	exp24:e
+				{:
+					RESULT=e;
+				:}
+			;
+
+exp24 ::=		CADENA:cad opcomp:op exp25:der
+				{:
+					RESULT=new NodoOpComp(op,new NodoCadena(cad),der);
+				:}
 			;
 
 opcomp ::= 		EQ
+				{:
+					RESULT="EQ";
+				:}
 			|	DIFERENTE
+				{:
+					RESULT="DIFERENTE";
+				:}
 			|	MAYOR
+				{:
+					RESULT="MAYOR";
+				:}
 			|	MENOR
-			;
-
-exp22 ::=		exp23 oplog comp
-			| 	exp23
+				{:
+					RESULT="MENOR";
+				:}
 			;
 
 oplog ::=		AND
+				{:	
+					RESULT="AND";
+				:}
 			|	OR
+				{:
+					RESULT="OR";
+				:}
 			;
 
-exp23 ::=		COMILLAS CADENA COMILLAS
-			|	NUMERO
-			|	FECHA
+exp25 ::=		COMILLAS CADENA:cad COMILLAS
+				{:
+					RESULT=new NodoCadena(cad);
+				:}
+			|	NUMERO:num
+				{:
+					RESULT=new NodoNumero(num);
+				:}
+			|	FECHA:e
+				{:
+					RESULT=new NodoFecha(e);
+				:}
 			;	
+	
 
-exp3 ::= 		IPAREN expe2 DPAREN opm IPAREN expe2 DPAREN
+exp3 ::= 		IPAREN expe2:a DPAREN opm:op IPAREN expe2:b DPAREN
+				{:
+					RESULT=new NodoOpC(op,a,b);
+				:}
 			;
 
 opm ::=			UNI
+				{:
+					RESULT="UNI";
+				:}
 			|	DIF
+				{:
+					RESULT="DIF";
+				:}
 			|	PROC
+				{:
+					RESULT="PROC";
+				:}
 			| 	INT
+				{:
+					RESULT="INT";
+				:}
 			;	

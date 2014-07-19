@@ -1,0 +1,65 @@
+expresion ::= 	proyecc
+			| 	selec
+			| 	operaciones
+			|	CADENA
+			;
+
+proyecc ::= 	PRO atributos IPAREN expresion DPAREN
+			;
+
+atributos ::= 		atributo COMA atributos 
+			|	atributo
+			;
+
+atributo ::= 		atributo opsure opmulti
+			|	opmulti
+			|	CADENA
+			;
+
+opmulti ::=   	opmulti MULTI valores
+			|	valores
+			;
+
+opsure ::=   	SUMA
+			|	RESTA
+			;
+
+selec ::= 		SEL condiciones IPAREN expresion DPAREN
+			;
+
+condiciones ::=		opnot oplog condiciones
+			| 	opnot
+			;
+
+opnot ::= 		NOT opnot
+			|	comparacion
+			;
+
+comparacion ::=		CADENA opcomp valores
+			;
+
+opcomp ::= 		EQ
+			|	DIFERENTE
+			|	MAYOR
+			|	MENOR
+			;
+
+oplog ::=		AND
+			|	OR
+			;
+
+valores ::=		COMILLAS CADENA COMILLAS
+			|	NUMERO
+			|	FECHA
+			|	CADENA
+			;	
+	
+
+operaciones ::= IPAREN expresion DPAREN opm IPAREN expresion DPAREN
+			;
+
+opm ::=			UNI
+			|	DIF
+			|	PROC
+			| 	INT
+			;	

@@ -1,9 +1,9 @@
 package AST;
 
-public class NodoSeleccion extends NodoBase{
+public class NodoComa extends NodoBase{
 	NodoBase HijoIzq;
 	NodoBase HijoDer;
-	public NodoSeleccion(NodoBase hijoIzq, NodoBase hijoDer) {
+	public NodoComa(NodoBase hijoIzq, NodoBase hijoDer) {
 		super();
 		HijoIzq = hijoIzq;
 		HijoDer = hijoDer;
@@ -20,6 +20,4 @@ public class NodoSeleccion extends NodoBase{
 	public void setHijoDer(NodoBase hijoDer) {
 		HijoDer = hijoDer;
 	}
-	
-	
 }

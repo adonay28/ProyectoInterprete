@@ -1,6 +1,6 @@
 package AST;
 
-public class NodoNumero extends NoboBase{
+public class NodoNumero extends NodoBase{
 	Integer numero;
 	
 	

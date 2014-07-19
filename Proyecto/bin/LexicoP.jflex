@@ -1,13 +1,13 @@
 
 %%
-%unicode
+%cup
 %%
-σ			{ return new java_cup.runtime.Symbol(sym.SEL);} 
-Π			{ return new java_cup.runtime.Symbol(sym.PRO);}
-∪			{ return new java_cup.runtime.Symbol(sym.UNI);}
-"—"			{ return new java_cup.runtime.Symbol(sym.DIF);}
+SEL			{ return new java_cup.runtime.Symbol(sym.SEL);} 
+PRO			{ return new java_cup.runtime.Symbol(sym.PRO);}
+UNI			{ return new java_cup.runtime.Symbol(sym.UNI);}
+DIF			{ return new java_cup.runtime.Symbol(sym.DIF);}
 x			{ return new java_cup.runtime.Symbol(sym.PROC);}
-∩			{ return new java_cup.runtime.Symbol(sym.INT);}
+INT			{ return new java_cup.runtime.Symbol(sym.INT);}
 AND		    { return new java_cup.runtime.Symbol(sym.AND);} 
 NOT		    { return new java_cup.runtime.Symbol(sym.NOT);}
 OR		    { return new java_cup.runtime.Symbol(sym.OR);} 
