@@ -1,8 +1,11 @@
 package AST;
 
+import com.google.common.collect.Table;
+
 public class NodoSeleccion extends NodoBase{
 	NodoBase HijoIzq;
 	NodoBase HijoDer;
+	Table<Integer, String, String> resultado;
 	public NodoSeleccion(NodoBase hijoIzq, NodoBase hijoDer) {
 		super();
 		HijoIzq = hijoIzq;
@@ -19,6 +22,12 @@ public class NodoSeleccion extends NodoBase{
 	}
 	public void setHijoDer(NodoBase hijoDer) {
 		HijoDer = hijoDer;
+	}
+	public Table<Integer, String, String> getResultado() {
+		return resultado;
+	}
+	public void setResultado(Table<Integer, String, String> resultado) {
+		this.resultado = resultado;
 	}
 	
 	

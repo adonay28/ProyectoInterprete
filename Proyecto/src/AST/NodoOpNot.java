@@ -2,7 +2,7 @@ package AST;
 
 public class NodoOpNot extends NodoBase{
 	NodoBase Hijounico;
-
+	String operacion;
 	public NodoOpNot(NodoBase hijounico) {
 		super();
 		Hijounico = hijounico;
@@ -14,6 +14,14 @@ public class NodoOpNot extends NodoBase{
 
 	public void setHijounico(NodoBase hijounico) {
 		Hijounico = hijounico;
+	}
+
+	public String getOperacion() {
+		return operacion;
+	}
+
+	public void setOperacion(String operacion) {
+		this.operacion = operacion;
 	}
 	
 }

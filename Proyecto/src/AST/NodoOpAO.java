@@ -3,6 +3,7 @@ package AST;
 public class NodoOpAO extends NodoOpLog{
 	NodoBase LogicaIzq;
 	NodoBase LogicaDer;
+	String operacion;
 	public NodoOpAO(String tipo, NodoBase logicaIzq, NodoBase logicaDer) {
 		super(tipo);
 		LogicaIzq = logicaIzq;
@@ -19,6 +20,12 @@ public class NodoOpAO extends NodoOpLog{
 	}
 	public void setLogicaDer(NodoBase logicaDer) {
 		LogicaDer = logicaDer;
+	}
+	public String getOperacion() {
+		return operacion;
+	}
+	public void setOperacion(String operacion) {
+		this.operacion = operacion;
 	}
 	
 }

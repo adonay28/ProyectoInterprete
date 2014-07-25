@@ -22,7 +22,7 @@ OR		    { return new java_cup.runtime.Symbol(sym.OR);}
 "+"			{ return new java_cup.runtime.Symbol(sym.SUMA);}
 "-"			{ return new java_cup.runtime.Symbol(sym.RESTA);}
 "*"			{ return new java_cup.runtime.Symbol(sym.MULTI);}
-[A-Za-z]+(_[a-z]+)*  { return new java_cup.runtime.Symbol(sym.CADENA, new String(yytext()));} 
+[A-Za-z]+[_A-Za-z0-9]*  { return new java_cup.runtime.Symbol(sym.CADENA, new String(yytext()));} 
 [0-9][0-9]\/[0-9][0-9]\/[0-9][0-9][0-9][0-9]            { return new java_cup.runtime.Symbol(sym.FECHA, new String(yytext()));}
 [0-9]+		{ return new java_cup.runtime.Symbol(sym.NUMERO, new Integer(yytext()));}
 [ \n\t\r]+	{}

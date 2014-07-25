@@ -5,6 +5,7 @@ public class NodoOpBinaria extends NodoOperacion {
 
 	NodoBase operandoIzquierdo;
 	NodoBase operandoDerecho;
+	String operacion;
 	public NodoBase getOperandoIzquierdo() {
 		return operandoIzquierdo;
 	}
@@ -22,6 +23,13 @@ public class NodoOpBinaria extends NodoOperacion {
 		super(tipo);
 		this.operandoIzquierdo = operandoIzquierdo;
 		this.operandoDerecho = operandoDerecho;
+		operacion = "";
+	}
+	public String getOperacion() {
+		return operacion;
+	}
+	public void setOperacion(String operacion) {
+		this.operacion = operacion;
 	}
 
 	

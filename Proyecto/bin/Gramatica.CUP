@@ -4,84 +4,60 @@
 
 terminal		Integer NUMERO;
 terminal 		Date FECHA;
-terminal 		String CADENA,COMILLAS;
+terminal 		String CADENA;
 terminal		SUMA, RESTA, MULTI, IPAREN, DPAREN, EQ, SEL, PRO, UNI, DIF;
-terminal 		COMA, PROC, INT, AND, NOT, OR, DIFERENTE, MAYOR, MENOR;
-non terminal    expe, exp1, exp2, exp3, expe2, exp11, exp12, exp13, exp14, exp15, exp16;
-non terminal    exp22, exp23, exp24, exp25, oplog, opcomp, opsure, opm, sesion, ecuacion;
+terminal 		COMA, PROC, INT, OR, AND, NOT, DIFERENTE, MAYOR, MENOR, COMILLAS;
+non terminal    query, expresion, proyecc, atributos, atributo, opsure, opmulti, selec, condiciones;
+non terminal	opand, comparacion, opcomp, opnot, valores, operaciones, opm;
 
 
-sesion ::=  	ecuacion 
-			| 	ecuacion sesion
-			;
-
-ecuacion ::= 	expe:v 
+query ::= 	expresion:v 
 				{: 
 					System.out.println("AST construido correctamente");
-				:}
+				:} EQ
 			;
 
-expe ::= 		exp1:a
+expresion ::= 	proyecc:a
 				{:
 					RESULT=a;
 				:}
-			| 	exp2:b
+			| 	selec:a
 				{:
-					RESULT=b;
+					RESULT=a;
 				:}
-			| 	exp3:e
+			| 	operaciones:a
 				{:
-					RESULT=e;
+					RESULT=a;
 				:}
-			;
-
-expe2 ::= 		CADENA:cad
+			|	CADENA:a
 				{:
-					RESULT=new NodoCadena(cad);
-				:}
-			|	expe:e
-				{:
-					RESULT=e;
+					RESULT=new NodoID(a);
 				:}
 			;
 
-exp1 ::= 		PRO exp16:a IPAREN expe2:b DPAREN
+proyecc ::= 	PRO atributos:a IPAREN expresion:b DPAREN
 				{:
-					RESULT=new NodoProyeccion(a,b);
+					RESULT= new NodoProyeccion(a,b);
 				:}
 			;
 
-exp16 ::= 		exp11:a COMA exp16:b 
+atributos ::= 	atributos:a COMA atributo:b
 				{:
-					RESULT=new NodoComa(a,b);
+					RESULT= new NodoComa(a,b);
 				:}
-			|	exp11:e
+			|	atributo:a
 				{:
-					RESULT=e;
-				:}
-			;
-
-exp11 ::= 		CADENA:cad opsure:op exp13:b 
-				{:
-					RESULT=new NodoOpBinaria(op,new NodoCadena(cad),b);
-				:}
-			|	exp12:e
-				{:
-					RESULT=e;
-				:}
-			|	CADENA:e
-				{:
-					RESULT=new NodoCadena(e);
+					RESULT=a;
 				:}
 			;
 
-exp12 ::=   	CADENA:cad MULTI exp13:b
+atributo ::= 	atributo:a opsure:op opmulti:b
 				{:
-					RESULT=new NodoOpBinaria("*",new NodoCadena(cad),b);
+					RESULT= new NodoOpBinaria(op,a,b);
 				:}
-			|	exp13:e
+			|	opmulti:a
 				{:
-					RESULT=e;
+					RESULT=a;
 				:}
 			;
 
@@ -95,65 +71,53 @@ opsure ::=   	SUMA
 				:}
 			;
 
-exp13 ::= 		exp13:a opsure:op exp14:b
+opmulti ::=   	opmulti:a MULTI valores:b
 				{:
-					RESULT=new NodoOpBinaria(op,a,b);
+					RESULT= new NodoOpBinaria("*",a,b);
 				:}
-			|	exp14:e
+			|	valores:a
 				{:
-					RESULT=e;
-				:}
-			;
-
-exp14 ::=		exp14:a MULTI exp15:b
-				{:
-					RESULT=new NodoOpBinaria("*",a,b);
-				:}
-			| 	exp15:e
-				{:
-					RESULT=e;
+					RESULT=a;
 				:}
 			;
 
-exp15 ::=		NUMERO:e
+selec 	::= 	SEL condiciones:a IPAREN expresion:b DPAREN
 				{:
-					RESULT=new NodoNumero(e);
+					RESULT= new NodoSeleccion(a,b);
 				:}
 			;
 
-exp2 ::= 		SEL exp22:a IPAREN expe2:b DPAREN
+condiciones ::= condiciones:a OR opand:b	
 				{:
-					RESULT=new NodoSeleccion(a,b);
+					RESULT= new NodoOpAO("OR",a,b);
+				:}
+			|	opand:a
+				{:
+					RESULT=a;
 				:}
 			;
 
-exp22 ::=		exp23:a oplog:op exp22:b
+opand   ::=		opand:a AND comparacion:b
 				{:
-					RESULT=new NodoOpAO(op,a,b);
+					RESULT= new NodoOpAO("AND",a,b);
 				:}
-			| 	exp23:e
+			| 	comparacion:a
 				{:
-					RESULT=e;
-				:}
-			;
-
-exp23 ::= 		NOT exp23:a
-				{:
-					RESULT=new NodoOpNot(a);
-				:}
-			|	exp24:e
-				{:
-					RESULT=e;
+					RESULT=a;
 				:}
 			;
 
-exp24 ::=		CADENA:cad opcomp:op exp25:der
+comparacion ::=	valores:a opcomp:op valores:b
 				{:
-					RESULT=new NodoOpComp(op,new NodoCadena(cad),der);
+					RESULT= new NodoOpComp(op,a,b);
+				:}
+			|	opnot:a
+				{:
+					RESULT=a;
 				:}
 			;
-
-opcomp ::= 		EQ
+			
+opcomp 	::= 	EQ
 				{:
 					RESULT="EQ";
 				:}
@@ -171,34 +135,33 @@ opcomp ::= 		EQ
 				:}
 			;
 
-oplog ::=		AND
-				{:	
-					RESULT="AND";
-				:}
-			|	OR
+opnot 	::= 	NOT comparacion:a
 				{:
-					RESULT="OR";
+					RESULT= new NodoOpNot(a);
 				:}
 			;
 
-exp25 ::=		COMILLAS CADENA:cad COMILLAS
+valores ::=		COMILLAS CADENA:cad COMILLAS
 				{:
-					RESULT=new NodoCadena(cad);
+					RESULT= new NodoCadena(cad);
 				:}
-			|	NUMERO:num
+			|	NUMERO:a
 				{:
-					RESULT=new NodoNumero(num);
+					RESULT= new NodoNumero(a);
 				:}
-			|	FECHA:e
+			|	FECHA:a
 				{:
-					RESULT=new NodoFecha(e);
+					RESULT= new NodoFecha(a);
+				:}
+			|	CADENA:a
+				{:
+					RESULT= new NodoID(a);
 				:}
 			;	
 	
-
-exp3 ::= 		IPAREN expe2:a DPAREN opm:op IPAREN expe2:b DPAREN
+operaciones ::= IPAREN expresion:a DPAREN opm:op IPAREN expresion:b DPAREN
 				{:
-					RESULT=new NodoOpC(op,a,b);
+					RESULT= new NodoOpC(op,a,b);
 				:}
 			;
 

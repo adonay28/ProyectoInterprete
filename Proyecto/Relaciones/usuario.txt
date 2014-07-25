@@ -1,0 +1,10 @@
+Nombre(cadena);apellido(cadena);cedula(entero)
+"pedro";"medina";123453
+"juan";"vargas";14232
+"maria";"chacon";543213
+"andrea";"zambrano";345677
+"luis";"diaz”;32123
+"carmen";"berbesi";124455
+"edwin";"sierra";21779
+"adonay";"porras";2321	
+"gerardo";"sanchez";20000

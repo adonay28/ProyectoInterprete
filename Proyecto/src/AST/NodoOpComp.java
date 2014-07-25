@@ -3,6 +3,7 @@ package AST;
 public class NodoOpComp extends NodoOperador{
 	NodoBase ParteIzq;
 	NodoBase ParteDer;
+	String operacion;
 	public NodoOpComp(String tipo, NodoBase parteIzq, NodoBase parteDer) {
 		super(tipo);
 		ParteIzq = parteIzq;
@@ -19,6 +20,12 @@ public class NodoOpComp extends NodoOperador{
 	}
 	public void setParteDer(NodoBase parteDer) {
 		ParteDer = parteDer;
+	}
+	public String getOperacion() {
+		return operacion;
+	}
+	public void setOperacion(String operacion) {
+		this.operacion = operacion;
 	}
 	
 }

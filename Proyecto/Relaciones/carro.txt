@@ -1,0 +1,13 @@
+modelo(cadena);marca(cadena);placa(cadena)
+"mazda3";"mazda";"Zt12"
+"mazda6";"mazda";"ds22"
+"capris";"chevrolet";"14sa"
+"uno";"fiat";"12aa"
+"gallardo";"lamboguini";"llll"
+"aveo";"chevrolet";"rt35"
+"camioneta";"niko";"nb35n"
+"mustan";"mustan";"1ppp"
+"yaris";"toyota";"54th"
+"rojo";"ferrari";"y5yy5"
+"murcielago";"lamboguini";"h3ggg"
+"runner";"ford";"gf12"
