@@ -102,8 +102,8 @@ public class Tablas {
 			for (int i = 0; i < lcol.size(); i++) {
 				Map<String,String> map = tabla.row(key);
 				if(map.containsKey(lcol.get(i))){
-					String placa = map.get(lcol.get(i));
-					temporal.put(c, lcol.get(i), placa);
+					String valor = map.get(lcol.get(i));
+					temporal.put(c, lcol.get(i), valor);
 				}
 				else{
 					System.out.println("Error: columna no existe");
@@ -113,5 +113,37 @@ public class Tablas {
 			c++;
 		}
 		return temporal;
+	}
+	
+	Table<Integer, String, String> Seleccion(String lcol,Table<Integer, String, String> tabla){
+		Table<Integer, String, String> temporal = HashBasedTable.create();
+		int c = 0;
+		String[] aux = lcol.split(",");
+		for (int key = 2; key < tabla.rowKeySet().size(); key++) {
+			Map<String,String> map = tabla.row(key);
+			if(map.containsKey(aux[0])){
+				String valor = map.get(aux[0]);
+				if(aux[1].equals("EQ")){
+					if(valor.equals(aux[2])){
+						
+					}
+				}
+				else{
+					//otras
+				}
+			}
+			else{
+				System.out.println("Error: columna no existe");
+				System.exit(1);
+			}
+			c++;
+		}
+		return temporal;
+	}
+	Table<Integer, String, String> Union(Table<Integer, String, String> tabla1,Table<Integer, String, String> tabla2){
+		Table<Integer, String, String> temporal = HashBasedTable.create();
+		
+		return temporal;
+		
 	}
 }
