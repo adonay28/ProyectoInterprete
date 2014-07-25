@@ -1,0 +1,184 @@
+//Codigo empaquetamiento
+//Codigo Usuario
+//Lista Simbolos
+
+terminal		Integer NUMERO;
+terminal 		Date FECHA;
+terminal 		String CADENA;
+terminal		SUMA, RESTA, MULTI, IPAREN, DPAREN, EQ, SEL, PRO, UNI, DIF;
+terminal 		COMA, PROC, INT, OR, AND, NOT, DIFERENTE, MAYOR, MENOR, COMILLAS;
+non terminal    query, expresion, proyecc, atributos, atributo, opsure, opmulti, selec, condiciones;
+non terminal	opand, comparacion, opcomp, opnot, valores, operaciones, opm;
+
+
+query ::= 	expresion:v 
+				{: 
+					System.out.println("AST construido correctamente");
+				:} EQ
+			;
+
+expresion ::= 	proyecc:a
+				{:
+					RESULT=a;
+				:}
+			| 	selec:a
+				{:
+					RESULT=a;
+				:}
+			| 	operaciones:a
+				{:
+					RESULT=a;
+				:}
+			|	CADENA:a
+				{:
+					RESULT=new NodoID(a);
+				:}
+			;
+
+proyecc ::= 	PRO atributos:a IPAREN expresion:b DPAREN
+				{:
+					RESULT= new NodoProyeccion(a,b);
+				:}
+			;
+
+atributos ::= 	atributos:a COMA atributo:b
+				{:
+					RESULT= new NodoComa(a,b);
+				:}
+			|	atributo:a
+				{:
+					RESULT=a;
+				:}
+			;
+
+atributo ::= 	atributo:a opsure:op opmulti:b
+				{:
+					RESULT= new NodoOpBinaria(op,a,b);
+				:}
+			|	opmulti:a
+				{:
+					RESULT=a;
+				:}
+			;
+
+opsure ::=   	SUMA
+				{:
+					RESULT="+";
+				:}
+			|	RESTA
+				{:
+					RESULT="-";
+				:}
+			;
+
+opmulti ::=   	opmulti:a MULTI valores:b
+				{:
+					RESULT= new NodoOpBinaria("*",a,b);
+				:}
+			|	valores:a
+				{:
+					RESULT=a;
+				:}
+			;
+
+selec 	::= 	SEL condiciones:a IPAREN expresion:b DPAREN
+				{:
+					RESULT= new NodoSeleccion(a,b);
+				:}
+			;
+
+condiciones ::= condiciones:a OR opand:b	
+				{:
+					RESULT= new NodoOpAO("OR",a,b);
+				:}
+			|	opand:a
+				{:
+					RESULT=a;
+				:}
+			;
+
+opand   ::=		opand:a AND comparacion:b
+				{:
+					RESULT= new NodoOpAO("AND",a,b);
+				:}
+			| 	comparacion:a
+				{:
+					RESULT=a;
+				:}
+			;
+
+comparacion ::=	valores:a opcomp:op valores:b
+				{:
+					RESULT= new NodoOpComp(op,a,b);
+				:}
+			|	opnot:a
+				{:
+					RESULT=a;
+				:}
+			;
+			
+opcomp 	::= 	EQ
+				{:
+					RESULT="EQ";
+				:}
+			|	DIFERENTE
+				{:
+					RESULT="DIFERENTE";
+				:}
+			|	MAYOR
+				{:
+					RESULT="MAYOR";
+				:}
+			|	MENOR
+				{:
+					RESULT="MENOR";
+				:}
+			;
+
+opnot 	::= 	NOT comparacion:a
+				{:
+					RESULT= new NodoOpNot(a);
+				:}
+			;
+
+valores ::=		COMILLAS CADENA:cad COMILLAS
+				{:
+					RESULT= new NodoCadena(cad);
+				:}
+			|	NUMERO:a
+				{:
+					RESULT= new NodoNumero(a);
+				:}
+			|	FECHA:a
+				{:
+					RESULT= new NodoFecha(a);
+				:}
+			|	CADENA:a
+				{:
+					RESULT= new NodoID(a);
+				:}
+			;	
+	
+operaciones ::= IPAREN expresion:a DPAREN opm:op IPAREN expresion:b DPAREN
+				{:
+					RESULT= new NodoOpC(op,a,b);
+				:}
+			;
+
+opm ::=			UNI
+				{:
+					RESULT="UNI";
+				:}
+			|	DIF
+				{:
+					RESULT="DIF";
+				:}
+			|	PROC
+				{:
+					RESULT="PROC";
+				:}
+			| 	INT
+				{:
+					RESULT="INT";
+				:}
+			;	
