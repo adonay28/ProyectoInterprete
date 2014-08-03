@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -366,4 +367,27 @@ public class Tablas {
 		return ordenado;
 	}
 	
+	public void mostrar_tablas(Table<Integer, String, String> tabla) {
+		Collection<String> set = tabla.row(0).values();
+		int cont = 0;
+		String[][] tablas = new String[tabla.rowKeySet().size()][set.size()];
+		for (Iterator<String> it = set.iterator(); it.hasNext();) {
+		String columna = it.next();
+		tablas[0][cont] = columna;
+		for (int i = 2; i < tabla.rowKeySet().size(); i++) {
+		Map<String, String> set2 = tabla.row(i);
+
+		tablas[i - 1][cont] = set2.get(columna);
+
+		}
+		cont++;
+		}
+		for (int i = 0; i < tabla.rowKeySet().size()-1; i++) {
+		System.out.println();
+		for (int j = 0; j < set.size(); j++) {
+		System.out.print(tablas[i][j] + "    ");
+		}
+
+		}
+		}
 }
