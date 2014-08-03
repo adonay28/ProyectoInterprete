@@ -339,7 +339,7 @@ public class Tablas {
 		colIO.addAll(Ordenar(tabla1));
 		
 		
-		if (tabla1.columnKeySet().size()==tabla2.columnKeySet().size()) {
+		if (tabla1.row(0).keySet().size()==tabla2.row(0).keySet().size()) {
 			int CantReg = 0;
 			for (Integer keyI : tabla1.rowKeySet()) {
 				if(keyI<2){

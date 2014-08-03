@@ -19,9 +19,11 @@ import com.google.common.collect.Table;
 
 public class Semantico {
 	Tablas tablas;
+	Tabla_simbolos tabla_simbolos;
 	public Semantico() {
 		// TODO Auto-generated constructor stub
 		tablas = new Tablas("Relaciones/");
+		tabla_simbolos = new Tabla_simbolos();
 	}
 	public void obtener_resultado(Object arbol){
 		tablas.mostrar_tablas(obtener_resultado_nodo(recorrer_arbol(arbol,null)));
@@ -56,6 +58,7 @@ public class Semantico {
 				//Hacer operacion sobre la tabla y guardar el resultado
 				//pro.setResultado("Es una proyeccion de la tabla " + nodoid_der.getCadena() + " de los atributos" + atributos);
 				pro.setResultado(tablas.Proyeccion(atributos, tablas.obtener_table(nodoid_der.getCadena())));
+				
 			}
 			else{
 				System.out.println("Es un resultado de una expresion");
@@ -63,6 +66,7 @@ public class Semantico {
 				pro.setResultado(tablas.Proyeccion(atributos, obtener_resultado_nodo(hijoder)));
 				
 			}
+			pro.setNombre_simbolo(tabla_simbolos.agregar(pro.getResultado()));
 			return pro;
 		}
 		if(arbol instanceof NodoComa){
@@ -246,7 +250,6 @@ public class Semantico {
 					System.exit(1);
 				}
 			}
-			//Falta hacer la interseccion o la union dependiendo del tipo
 			if(nodoAO.getTipo().equals("AND")){
 				nodoAO.setResultado(tablas.Interseccion(tabla_izq, tabla_der));
 			}
