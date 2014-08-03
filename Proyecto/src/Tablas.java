@@ -507,7 +507,7 @@ public class Tablas {
 					if (agregar) {
 						for (Iterator<String> it = set.iterator(); it.hasNext();) {
 							String columna = it.next();
-							temporal.put(keyI,columna,map.get(columna));
+							temporal.put(CantReg,columna,map.get(columna));
 						}
 						CantReg++;
 					}
