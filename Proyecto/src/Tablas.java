@@ -484,11 +484,21 @@ public class Tablas {
 				Map<String, String> map = tabla1.row(keyI);
 				Set<String> set = map.keySet();
 				if (keyI < 2) {
-					for (Iterator<String> it = set.iterator(); it.hasNext();) {
-						String columna = it.next();
-						temporal.put(keyI, columna, map.get(columna));
+					if(keyI==0){
+						int i=0;
+						for (Iterator<String> it = set.iterator(); it.hasNext();) {
+							String columna = it.next();
+							temporal.put(CantReg, columna,"["+i+"]");
+							i++;
+						}
+						CantReg++;
+					}else{
+						for (Iterator<String> it = set.iterator(); it.hasNext();) {
+							String columna = it.next();
+							temporal.put(CantReg,columna, map.get(columna));
+						}
+						CantReg++;
 					}
-					CantReg++;
 				}
 				if (keyI >= 2) {
 					agregar = false;
@@ -510,9 +520,11 @@ public class Tablas {
 						}
 					}
 					if (agregar) {
+						int i=0;
 						for (Iterator<String> it = set.iterator(); it.hasNext();) {
 							String columna = it.next();
-							temporal.put(CantReg, columna, map.get(columna));
+							temporal.put(CantReg, "["+i+"]", map.get(columna));
+							i++;
 						}
 						CantReg++;
 					}
@@ -716,6 +728,7 @@ public class Tablas {
 		}
 		return temporal;
 }
+	
 	public List<String> Ordenar(Table<Integer, String, String> tabla) {
 		List<String> ordenada = new ArrayList<String>();
 		Set<String> set = tabla.row(0).keySet();
