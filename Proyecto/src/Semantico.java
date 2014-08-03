@@ -60,7 +60,7 @@ public class Semantico {
 			else{
 				System.out.println("Es un resultado de una expresion");
 				//obtener resultado, hacer la proyeccion y guardar en resultado
-				//pro.setResultado("Es una proyeccion del resultado " + obtener_resultado_nodo(hijoder) + " de la columna " + atributos);
+				pro.setResultado(obtener_resultado_nodo(hijoder));
 				
 			}
 			return pro;
