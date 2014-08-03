@@ -544,12 +544,21 @@ public class Tablas {
 							temporal.put(CantReg,columna,map.get(columna));
 						}
 						int i=0;
-						for(Iterator<String> it = set2.iterator(); it.hasNext();){
-							String columna = it.next();
-							temporal.put(CantReg,"columna"+(tabla1.columnKeySet().size()/3+i),map2.get(columna));
-							i++;
+						if(keyD==0){
+							for(Iterator<String> it = set2.iterator(); it.hasNext();){
+								String columna = it.next();
+								temporal.put(CantReg,"columna"+(tabla1.columnKeySet().size()/3+i),map2.get(columna));
+								i++;
+							}
+							CantReg++;
 						}
-						CantReg++;
+						if(keyD==1){
+							for(Iterator<String> it = set2.iterator(); it.hasNext();){
+								String columna = it.next();
+								temporal.put(CantReg,columna,map2.get(columna));
+							}
+							CantReg++;
+						}
 					}else{
 						if(keyI>=2&&keyD>=2){
 							for(Iterator<String> it = set.iterator(); it.hasNext();){
