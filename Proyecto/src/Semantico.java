@@ -293,7 +293,7 @@ public class Semantico {
 		if (arbol instanceof NodoOpNot) {
 			System.out.println("NodoOpNot");
 			NodoOpNot nodoopnot = (NodoOpNot) arbol;
-			Object hijo = recorrer_arbol(nodoopnot.getHijounico(), null);
+			Object hijo = recorrer_arbol(nodoopnot.getHijounico(), tabla);
 			if (hijo instanceof NodoOpComp) {
 				System.out.println("NodoOpComp hijo unico");
 				NodoOpComp nodocomp = (NodoOpComp) hijo;
