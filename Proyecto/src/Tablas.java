@@ -5,13 +5,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-
 
 public class Tablas {
 	List<String> tablas;
@@ -68,7 +69,7 @@ public class Tablas {
 		        		String[] filas = linea.split(";");
 			            for (int i = 0; i < filas.length; i++) {
 			               String remplazado= filas[i].replace("\"", "");
-			               tabla.put(clinea+1, nombre_columna.get(i), remplazado);
+			               tabla.put(clinea+1, nombre_columna.get(i)+":"+(i+1), remplazado);
 			            }
 		        	}
 		        	clinea++;
@@ -140,10 +141,229 @@ public class Tablas {
 		}
 		return temporal;
 	}
+	
 	Table<Integer, String, String> Union(Table<Integer, String, String> tabla1,Table<Integer, String, String> tabla2){
+
 		Table<Integer, String, String> temporal = HashBasedTable.create();
 		
+		Set<String> columnas = tabla1.row(2).keySet();
+		
+		Object col[] = tabla1.columnKeySet().toArray();
+		List<String> colI = new ArrayList<String>();
+		List<String> colIO = new ArrayList<String>();
+		for(Iterator<String> it = columnas.iterator(); it.hasNext();){
+			String columna = it.next();
+			colI.add(columna);	
+		}
+		colIO.addAll(Ordenar(colI));
+		
+		int i;
+		if (tabla1.columnKeySet().size()==tabla2.columnKeySet().size()) {
+			int CantReg = 0;
+			for (Integer keyI : tabla1.rowKeySet()) {
+				if(keyI<2){
+					Map<String, String> map = tabla1.row(keyI);
+					Set<String> set = map.keySet();
+					for(Iterator<String> it = set.iterator(); it.hasNext();){
+						String columna = it.next();
+						temporal.put(CantReg,columna,map.get(columna));
+					}
+					CantReg++;
+				}
+				if(keyI>=2){
+					Map<String, String> map = tabla1.row(keyI);
+					Set<String> set = map.keySet();
+					for(Iterator<String> it = set.iterator(); it.hasNext();){
+						String columna = it.next();
+						temporal.put(CantReg,columna,map.get(columna));
+					}
+					CantReg++;
+				}
+			}
+			for (Integer keyD : tabla2.rowKeySet()) {
+				if(keyD>=2){
+					Map<String, String> map = tabla2.row(keyD);
+					Set<String> set = map.keySet();
+					for(Iterator<String> it = set.iterator(); it.hasNext();){
+						String columna = it.next();
+						temporal.put(CantReg,columna,map.get(columna));
+					}
+					CantReg++;
+				}
+			}
+		}
 		return temporal;
 		
 	}
+
+	Table<Integer, String, String> Interseccion(Table<Integer, String, String> tabla1,Table<Integer, String, String> tabla2){
+
+		Table<Integer, String, String> temporal = HashBasedTable.create();
+		List<String> colI = new ArrayList<String>();
+		List<String> colIO = new ArrayList<String>();
+		Object colIT[] = tabla1.columnKeySet().toArray();
+		List<String> colD = new ArrayList<String>();
+		List<String> colDO = new ArrayList<String>();
+		Object colDT[] = tabla2.columnKeySet().toArray();
+		int coniguals;
+		int regI = tabla1.rowKeySet().size();
+		int regD = tabla2.rowKeySet().size();
+		Boolean agregar;
+		Set<String> columnas = tabla1.row(2).keySet();
+		Set<String> columnas2 = tabla2.row(2).keySet();
+		for(Iterator<String> it = columnas.iterator(); it.hasNext();){
+			String columna = it.next();
+			colI.add(columna);	
+		}
+		colIO.addAll(Ordenar(colI));
+		
+		for(Iterator<String> it = columnas2.iterator(); it.hasNext();){
+			String columna = it.next();
+			colD.add(columna);	
+		}
+		colDO.addAll(Ordenar(colD));
+		
+		if (colIO.size()==colDO.size()) {
+			
+				for (Integer keyI : tabla1.rowKeySet()){ 
+					Map<String, String> map = tabla1.row(keyI);
+					Set<String> set = map.keySet();
+					if(keyI<2){
+						for(Iterator<String> it = set.iterator(); it.hasNext();){
+							String columna = it.next();
+							temporal.put(keyI,columna,map.get(columna));
+						}
+						
+					}
+					if (keyI>=2) {				
+						agregar = false;
+						for (Integer keyD : tabla2.rowKeySet()) {
+							
+							coniguals = 0;
+							if(keyD>=2){
+								for (int i = 0; i < colIO.size(); i++) {
+									String A =(tabla1.get(keyI,colIO.get(i)));
+									String B =(tabla2.get(keyD,colDO.get(i)));
+									if(A.equals(B)){
+										coniguals++;
+									}						
+								}
+								if (coniguals==colDO.size()) {
+									agregar = true;
+									break;
+								}
+							}
+						}
+						if (agregar) {
+							for (Iterator<String> it = set.iterator(); it.hasNext();) {
+								String columna = it.next();
+								temporal.put(keyI,columna,map.get(columna));
+							}
+						}
+					}
+				}
+		}
+		return temporal;
+		
+	}
+
+	Table<Integer, String, String> Diferencia(Table<Integer, String, String> tabla1,Table<Integer, String, String> tabla2){
+		Table<Integer, String, String> temporal = HashBasedTable.create();
+		
+		int regI = tabla1.rowKeySet().size();
+		int regD = tabla2.rowKeySet().size();
+		
+		int coniguals;
+		Object col[] = tabla1.columnKeySet().toArray();
+		Object col2[] = tabla2.columnKeySet().toArray();
+		
+		List<String> colI = new ArrayList<String>();
+		List<String> colIO = new ArrayList<String>();
+		
+		List<String> colD = new ArrayList<String>();
+		List<String> colDO = new ArrayList<String>();
+		
+		Boolean agregar;
+		Set<String> columnas = tabla1.row(2).keySet();
+		Set<String> columnas2 = tabla2.row(2).keySet();
+		
+		for(Iterator<String> it = columnas.iterator(); it.hasNext();){
+			String columna = it.next();
+			colI.add(columna);	
+		}
+		colIO.addAll(Ordenar(colI));
+		
+		for(Iterator<String> it = columnas2.iterator(); it.hasNext();){
+			String columna = it.next();
+			colD.add(columna);	
+		}
+		colDO.addAll(Ordenar(colD));
+			
+		if (colIO.size()==colDO.size()) {
+				for (Integer keyI : tabla1.rowKeySet()) {
+					Map<String, String> map = tabla1.row(keyI);
+					Set<String> set = map.keySet();
+					if(keyI<2){
+						
+						for(Iterator<String> it = set.iterator(); it.hasNext();){
+							String columna = it.next();
+							temporal.put(keyI,columna,map.get(columna));
+						}
+						
+					}
+					if(keyI>=2)
+					{
+					agregar = true;
+					
+					for (Integer keyD : tabla2.rowKeySet()) {
+						coniguals = 0;
+						if(keyD>=2){
+							for (int i = 0; i < colIO.size(); i++) {
+								String A =(tabla1.get(keyI,colIO.get(i)));
+								String B =(tabla2.get(keyD,colDO.get(i)));
+								if(A.equals(B)){
+									coniguals++;
+								}
+							}
+							if (coniguals==colDO.size()) {
+								agregar = false;
+							}
+							if(!agregar){
+								break;
+							}
+						}
+					}
+					if (agregar) {
+						for (Iterator<String> it = set.iterator(); it.hasNext();) {
+							String columna = it.next();
+							temporal.put(keyI,columna,map.get(columna));
+						}
+					}
+				}
+				}
+		}else{
+			System.out.println("Error: Las dimensiones no coinciden");
+			System.exit(1);
+		}
+		return temporal;
+	}
+
+	public List<String> Ordenar(List<String> nordenado){
+		List<String> ordenado = new ArrayList<String>();
+		String[] columnas = new String[2];
+		for (int i = 0; i < nordenado.size(); i++) {
+			for (int j = 0; j < nordenado.size(); j++) {
+				String[] separar = nordenado.get(j).split(":");
+	            columnas[0]=separar[0];
+	            columnas[1]=separar[1];
+	            if (Integer.parseInt(columnas[1])==(i+1)) {
+					ordenado.add(columnas[0]+":"+columnas[1]);
+					break;
+				}
+			}
+		}
+		
+		return ordenado;
+	}
+	
 }

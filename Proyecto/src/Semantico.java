@@ -309,9 +309,42 @@ public class Semantico {
 		if(arbol instanceof NodoOpC){
 			System.out.println("NodoOpC");
 			NodoOpC nodoopc = (NodoOpC) arbol;
+			Table <Integer,String,String> izq,der;
 			Object hijoizq = recorrer_arbol(nodoopc.getTablaIzq());
+			if(hijoizq instanceof NodoID){
+				System.out.println("Es un identificador a la izquierda de la Union");
+				NodoID nodoid_izq = (NodoID) hijoizq;
+				izq = tablas.obtener_table(nodoid_izq.getCadena());
+			}else{
+				izq=obtener_resultado_nodo(hijoizq);
+				
+			}
 			Object hijoder = recorrer_arbol(nodoopc.getTablaDer());
-			//nodoopc.setResultado(obtener_resultado_nodo(hijoizq) + nodoopc.getTipo() + obtener_resultado_nodo(hijoder));
+			if(hijoder instanceof NodoID){
+				System.out.println("Es un identificador a la derecha de la Union");
+				NodoID nodoid_der = (NodoID) hijoder;
+				der = tablas.obtener_table(nodoid_der.getCadena());
+			}else{
+				der=obtener_resultado_nodo(hijoder);
+				
+			}
+			if(nodoopc.getTipo().equals("UNI"))
+			{
+				nodoopc.setResultado(tablas.Union(izq, der));
+			}
+			if(nodoopc.getTipo().equals("INT"))
+			{
+				nodoopc.setResultado(tablas.Interseccion(izq, der));
+			}
+			if(nodoopc.getTipo().equals("DIF"))
+			{
+				nodoopc.setResultado(tablas.Diferencia(izq, der));
+			}
+			if(nodoopc.getTipo().equals("PROC"))
+			{
+				//nodoopc.setResultado(tablas.ProductoC(izq, der));
+			}
+			
 			return nodoopc;
 		}
 		if(arbol instanceof NodoID){
