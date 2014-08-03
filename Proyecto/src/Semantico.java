@@ -19,9 +19,11 @@ import com.google.common.collect.Table;
 
 public class Semantico {
 	Tablas tablas;
+	Tabla_simbolos tabla_simbolos;
 	public Semantico() {
 		// TODO Auto-generated constructor stub
 		tablas = new Tablas("Relaciones/");
+		tabla_simbolos = new Tabla_simbolos();
 	}
 	public void obtener_resultado(Object arbol){
 		tablas.mostrar_tablas(obtener_resultado_nodo(recorrer_arbol(arbol,null)));
@@ -55,12 +57,13 @@ public class Semantico {
 				NodoID nodoid_der = (NodoID) hijoder;
 				//Hacer operacion sobre la tabla y guardar el resultado
 				//pro.setResultado("Es una proyeccion de la tabla " + nodoid_der.getCadena() + " de los atributos" + atributos);
-				pro.setResultado(tablas.Proyeccion(atributos, tablas.obtener_table(nodoid_der.getCadena())));
+				String nombre_tabla = tabla_simbolos.agregar(tablas.obtener_table(nodoid_der.getCadena()));
+				pro.setResultado(tablas.Proyeccion(atributos, tablas.obtener_table(nodoid_der.getCadena()),nombre_tabla));
 			}
 			else{
 				System.out.println("Es un resultado de una expresion");
 				//obtener resultado, hacer la proyeccion y guardar en resultado
-				pro.setResultado(tablas.Proyeccion(atributos, obtener_resultado_nodo(hijoder)));
+				pro.setResultado(tablas.Proyeccion(atributos, obtener_resultado_nodo(hijoder),obtener_nombre_tabla_nodo(hijoder)));
 				
 			}
 			return pro;
@@ -383,6 +386,26 @@ public class Semantico {
 		if(nodo instanceof NodoID){
 			NodoID nombre_tabla = (NodoID) nodo;
 			return tablas.obtener_table(nombre_tabla.getCadena());
+		}
+		return null;
+	}
+	
+	public String obtener_nombre_tabla_nodo(Object nodo){
+		if(nodo instanceof NodoProyeccion){
+			NodoProyeccion pro = (NodoProyeccion) nodo;
+			return pro.getNombre_simbolo();
+		}
+		if(nodo instanceof NodoSeleccion){
+			NodoSeleccion pro = (NodoSeleccion) nodo;
+			//return pro.getResultado();
+		}
+		if(nodo instanceof NodoOpC){
+			NodoOpC pro = (NodoOpC) nodo;
+			//return pro.getResultado();
+		}
+		if(nodo instanceof NodoID){
+			NodoID nombre_tabla = (NodoID) nodo;
+			//return tablas.obtener_table(nombre_tabla.getCadena());
 		}
 		return null;
 	}

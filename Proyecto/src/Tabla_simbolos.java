@@ -22,4 +22,13 @@ public class Tabla_simbolos {
 		tabla_simbolos.put( nombre, temporal);
 		return nombre;		
 	}
+	
+	public String consultar(String nombre_tabla, String columna){
+		String tipo = null;
+		Map<String, String> map = tabla_simbolos.get(nombre_tabla);
+		if(map.containsKey(columna)){
+			return map.get(columna);
+		}
+		return tipo;
+	}
 }

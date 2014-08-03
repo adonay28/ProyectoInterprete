@@ -98,11 +98,11 @@ public class Tablas {
 		List<String> a = new ArrayList<String>();
 		a.add("placa");
 		System.out.println(t.obtener_table("usu_car"));
-		System.out.println(t.Proyeccion(a,t.obtener_table("usu_car")));
+		//System.out.println(t.Proyeccion(a,t.obtener_table("usu_car")));
 	}
 	
 	Table<Integer, String, String> Proyeccion(List<String> lcol,
-			Table<Integer, String, String> tabla) {
+			Table<Integer, String, String> tabla, String nombre_tabla) {
 		Table<Integer, String, String> temporal = HashBasedTable.create();
 		int c = 2;
 		Map<String, String> map1 = tabla.row(0);
