@@ -1,0 +1,9 @@
+nombre_sucursal(cadena);ciudad_sucursal(cadena);activos(entero)
+"Becerril";"Aluche";400000
+"Centro";"Arganzuela";9000000
+"Collado Mediano";"Aluche";8000000
+"Galapagar";"Arganzuela";7100000
+"Moralzarzal";"La Granja";2100000
+"Navacerrada";"Aluche";1700000
+"Navas de la Asunción";"Alcalá de Henares";300000
+"Segovia";"Cerceda";3700000

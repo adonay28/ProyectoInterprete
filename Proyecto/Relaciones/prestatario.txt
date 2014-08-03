@@ -1,0 +1,9 @@
+nombre_cliente(cadena);numero_prestamo(cadena)
+"Fernandez";P-16
+"Gomez";P-11
+"Gomez";P-23
+"Lopez";P-15
+"Perez";P-93
+"Santos";P17
+"Sotoca";P-14
+"Valdivieso";P-17

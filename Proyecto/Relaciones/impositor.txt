@@ -1,0 +1,8 @@
+nombre_cliente(cadena);numero_cuenta(cadena)
+"Abril";"C-305"
+"Gomez";"C-215"
+"Gonzales";"C-101"
+"Gonzales";"C-201"
+"Lopez";"C-102"
+"Ruperez";"C-222"
+"Santos";"C-217"
