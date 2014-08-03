@@ -1,4 +1,4 @@
-identificador(entero);fecha_ini(fecha);afecha_fin(fecha)
+identificador(entero);fecha_ini(fecha);fecha_fin(fecha)
 "122";"02/02/2014";"02/03/2014";
 "123";"03/02/2014";"03/03/2014";
 "124";"04/03/2014";"04/04/2014";
