@@ -399,29 +399,44 @@ public class Tablas {
 				if (keyI < 2) {
 					Map<String, String> map = tabla1.row(keyI);
 					Set<String> set = map.keySet();
-					for (Iterator<String> it = set.iterator(); it.hasNext();) {
-						String columna = it.next();
-						temporal.put(CantReg, columna, map.get(columna));
+					
+					if(keyI==0){
+						int i=0;
+						for (Iterator<String> it = set.iterator(); it.hasNext();) {
+							String columna = it.next();
+							temporal.put(CantReg, columna,"["+i+"]");
+							i++;
+						}
+						CantReg++;
+					}else{
+						for (Iterator<String> it = set.iterator(); it.hasNext();) {
+							String columna = it.next();
+							temporal.put(CantReg,columna, map.get(columna));
+						}
+						CantReg++;
 					}
-					CantReg++;
 				}
 				if (keyI >= 2) {
 					Map<String, String> map = tabla1.row(keyI);
 					Set<String> set = map.keySet();
+					int i=0;
 					for (Iterator<String> it = set.iterator(); it.hasNext();) {
 						String columna = it.next();
-						temporal.put(CantReg, columna, map.get(columna));
+						temporal.put(CantReg, "["+i+"]", map.get(columna));
+						i++;
 					}
 					CantReg++;
 				}
 			}
 			for (Integer keyD : tabla2.rowKeySet()) {
-				if (keyD >= 2) {
+				if (keyD >= 2){
 					Map<String, String> map = tabla2.row(keyD);
 					Set<String> set = map.keySet();
+					int i=0;
 					for (Iterator<String> it = set.iterator(); it.hasNext();) {
 						String columna = it.next();
-						temporal.put(CantReg, columna, map.get(columna));
+						temporal.put(CantReg, "["+i+"]", map.get(columna));
+						i++;
 					}
 					CantReg++;
 				}
@@ -646,6 +661,55 @@ public class Tablas {
 		return temporal;
 	}
 
+	Table<Integer, String, String> Filtrar(Table<Integer, String, String> tabla1) {
+		Table<Integer, String, String> temporal = HashBasedTable.create();
+		Set<String> columnas = tabla1.row(2).keySet();
+		int coniguals;
+		int CantReg = 0;
+		Boolean agregar;
+		for (Integer keyI : tabla1.rowKeySet()) {
+				Map<String, String> map = tabla1.row(keyI);
+				Set<String> set = map.keySet();
+				if (keyI < 2) {
+
+					for (Iterator<String> it = set.iterator(); it.hasNext();) {
+						String columna = it.next();
+						temporal.put(CantReg, columna, map.get(columna));
+					}
+					CantReg++;
+				}else{
+					agregar = true;
+					for(Integer keyI2 : tabla1.rowKeySet()){
+						Map<String, String> map2 = tabla1.row(keyI2+keyI);
+						Set<String> set2 = map2.keySet();
+						if(keyI2>2){
+							coniguals=0;
+							for (Iterator<String> it = set2.iterator(); it.hasNext();) {
+								String columna = it.next();
+								if(map.get(columna).equals(map2.get(columna))){
+									coniguals++;
+								}
+							}
+							if(coniguals==columnas.size()){
+								agregar=false;
+							}
+						}
+						if(!agregar){
+							break;
+						}
+					}
+					if (agregar) {
+						for (Iterator<String> it = set.iterator(); it.hasNext();) {
+							String columna = it.next();
+							temporal.put(CantReg, columna, map.get(columna));
+						}
+						CantReg++;
+					}
+				}
+
+		}
+		return temporal;
+}
 	public List<String> Ordenar(Table<Integer, String, String> tabla) {
 		List<String> ordenada = new ArrayList<String>();
 		Set<String> set = tabla.row(0).keySet();
@@ -693,4 +757,5 @@ public class Tablas {
 			System.exit(1);
 		}
 	}
+	
 }
