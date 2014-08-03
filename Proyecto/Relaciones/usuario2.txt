@@ -3,8 +3,8 @@ Nombre2(cadena);apellido2(cadena);cedula2(entero)
 "juan2";"vargas2";123452
 "maria2";"chacon2";123453
 "andrea2";"zambrano2";123454
-"luis2";"diaz”2;123455
-"carmen2";"berbesi2";1123456
-"edwin2";"sierra2";123457
+"luis";"diaz”2;123455
+"carmen";"berbesi2";1123456
+"edwin";"sierra2";123457
 "adonay2";"porras2";123458	
 "gerardo2";"sanchez2";123459

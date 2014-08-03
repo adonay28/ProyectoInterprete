@@ -214,7 +214,7 @@ public class Semantico {
 			System.out.println("NodoOpAO");
 			NodoOpAO nodoAO = (NodoOpAO) arbol;
 			Object hijoizq = recorrer_arbol(nodoAO.getLogicaIzq(), tabla);
-			Table<Integer, String, String> tabla_der, tabla_izq;
+			Table<Integer, String, String> tabla_der = null, tabla_izq = null;
 			if (hijoizq instanceof NodoOpComp) {
 				System.out.println("NodoOpComp izq");
 				NodoOpComp opcomp_izq = (NodoOpComp) hijoizq;
@@ -247,6 +247,11 @@ public class Semantico {
 				}
 			}
 			//Falta hacer la interseccion o la union dependiendo del tipo
+			if(nodoAO.getTipo().equals("AND")){
+				nodoAO.setResultado(tablas.Interseccion(tabla_izq, tabla_der));
+			}
+			else if(nodoAO.getTipo().equals("OR"))
+				nodoAO.setResultado(tablas.Union(tabla_izq, tabla_der));
 			return nodoAO;
 		}
 		if (arbol instanceof NodoOpComp) {
@@ -293,6 +298,7 @@ public class Semantico {
 				System.out.println("NodoOpComp hijo unico");
 				NodoOpComp nodocomp = (NodoOpComp) hijo;
 				// RESTA de tabla con el resultado del nodo
+				nodoopnot.setResultado(tablas.Diferencia(tabla, nodocomp.getResultado()));
 				// nodoopnot.setOperacion("NOT " + nodocomp.getOperacion());
 			} else {
 				System.out
