@@ -402,7 +402,7 @@ public class Tablas {
 							String columna = it.next();
 							temporal.put(keyI,columna,map.get(columna));
 						}
-						
+						CantReg++;
 					}
 					if (keyI>=2) {				
 						agregar = false;
@@ -470,6 +470,7 @@ public class Tablas {
 		colDO.addAll(Ordenar(tabla2));
 			
 		if (colIO.size()==colDO.size()) {
+			int CantReg = 0;
 				for (Integer keyI : tabla1.rowKeySet()) {
 					Map<String, String> map = tabla1.row(keyI);
 					Set<String> set = map.keySet();
@@ -479,7 +480,7 @@ public class Tablas {
 							String columna = it.next();
 							temporal.put(keyI,columna,map.get(columna));
 						}
-						
+						CantReg++;
 					}
 					if(keyI>=2)
 					{
@@ -508,6 +509,7 @@ public class Tablas {
 							String columna = it.next();
 							temporal.put(keyI,columna,map.get(columna));
 						}
+						CantReg++;
 					}
 				}
 				}
