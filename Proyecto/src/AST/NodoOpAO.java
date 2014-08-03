@@ -1,9 +1,12 @@
 package AST;
 
+import com.google.common.collect.Table;
+
 public class NodoOpAO extends NodoOpLog{
 	NodoBase LogicaIzq;
 	NodoBase LogicaDer;
 	String operacion;
+	Table<Integer, String, String> resultado;
 	public NodoOpAO(String tipo, NodoBase logicaIzq, NodoBase logicaDer) {
 		super(tipo);
 		LogicaIzq = logicaIzq;
@@ -26,6 +29,12 @@ public class NodoOpAO extends NodoOpLog{
 	}
 	public void setOperacion(String operacion) {
 		this.operacion = operacion;
+	}
+	public Table<Integer, String, String> getResultado() {
+		return resultado;
+	}
+	public void setResultado(Table<Integer, String, String> resultado) {
+		this.resultado = resultado;
 	}
 	
 }

@@ -1,8 +1,10 @@
 package AST;
 
+import com.google.common.collect.Table;
+
 public class NodoOpNot extends NodoBase{
 	NodoBase Hijounico;
-	String operacion;
+	Table<Integer, String, String> resultado;
 	public NodoOpNot(NodoBase hijounico) {
 		super();
 		Hijounico = hijounico;
@@ -16,12 +18,12 @@ public class NodoOpNot extends NodoBase{
 		Hijounico = hijounico;
 	}
 
-	public String getOperacion() {
-		return operacion;
+	public Table<Integer, String, String> getResultado() {
+		return resultado;
 	}
 
-	public void setOperacion(String operacion) {
-		this.operacion = operacion;
+	public void setResultado(Table<Integer, String, String> resultado) {
+		this.resultado = resultado;
 	}
 	
 }

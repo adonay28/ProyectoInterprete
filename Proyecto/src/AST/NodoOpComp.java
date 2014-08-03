@@ -1,9 +1,11 @@
 package AST;
 
+import com.google.common.collect.Table;
+
 public class NodoOpComp extends NodoOperador{
 	NodoBase ParteIzq;
 	NodoBase ParteDer;
-	String operacion;
+	Table<Integer, String, String> resultado;
 	public NodoOpComp(String tipo, NodoBase parteIzq, NodoBase parteDer) {
 		super(tipo);
 		ParteIzq = parteIzq;
@@ -21,11 +23,11 @@ public class NodoOpComp extends NodoOperador{
 	public void setParteDer(NodoBase parteDer) {
 		ParteDer = parteDer;
 	}
-	public String getOperacion() {
-		return operacion;
+	public Table<Integer, String, String> getResultado() {
+		return resultado;
 	}
-	public void setOperacion(String operacion) {
-		this.operacion = operacion;
+	public void setResultado(Table<Integer, String, String> resultado) {
+		this.resultado = resultado;
 	}
 	
 }

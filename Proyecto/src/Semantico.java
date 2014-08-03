@@ -1,9 +1,20 @@
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.Table;
+import AST.NodoCadena;
+import AST.NodoComa;
+import AST.NodoFecha;
+import AST.NodoID;
+import AST.NodoNumero;
+import AST.NodoOpAO;
+import AST.NodoOpBinaria;
+import AST.NodoOpC;
+import AST.NodoOpComp;
+import AST.NodoOpNot;
+import AST.NodoProyeccion;
+import AST.NodoSeleccion;
 
-import AST.*;
+import com.google.common.collect.Table;
 
 
 public class Semantico {
@@ -13,14 +24,14 @@ public class Semantico {
 		tablas = new Tablas("Relaciones/");
 	}
 	public void obtener_resultado(Object arbol){
-		System.out.println(obtener_resultado_nodo(recorrer_arbol(arbol)));
+		tablas.mostrar_tablas(obtener_resultado_nodo(recorrer_arbol(arbol,null)));
 	}
 	
-	public Object recorrer_arbol(Object arbol){
+	public Object recorrer_arbol(Object arbol, Table<Integer, String, String> tabla){
 		if(arbol instanceof NodoProyeccion){
 			System.out.println("NodoProyeccion");
 			NodoProyeccion pro = (NodoProyeccion) arbol;
-			Object hijoizq = recorrer_arbol(pro.getHijoIzq());
+			Object hijoizq = recorrer_arbol(pro.getHijoIzq(),null);
 			List<String> atributos = new ArrayList<String>();
 			if(hijoizq instanceof NodoID) {
 				System.out.println("Un solo atributo");
@@ -38,7 +49,7 @@ public class Semantico {
 					System.exit(1);
 				}
 			}
-			Object hijoder = recorrer_arbol(pro.getHijoDer());
+			Object hijoder = recorrer_arbol(pro.getHijoDer(),null);
 			if(hijoder instanceof NodoID){
 				System.out.println("Es un identificador a la derecha de la proyeccion");
 				NodoID nodoid_der = (NodoID) hijoder;
@@ -57,7 +68,7 @@ public class Semantico {
 		if(arbol instanceof NodoComa){
 			System.out.println("NodoComa");
 			NodoComa coma = (NodoComa) arbol;
-			Object hijoizq = recorrer_arbol(coma.getHijoIzq());
+			Object hijoizq = recorrer_arbol(coma.getHijoIzq(),null);
 			if(hijoizq instanceof NodoID){
 				System.out.println("Nodoid izq");
 				NodoID nodoid_izq = (NodoID) hijoizq;
@@ -81,7 +92,7 @@ public class Semantico {
 					}
 				}
 			}
-			Object hijoder = recorrer_arbol(coma.getHijoDer());
+			Object hijoder = recorrer_arbol(coma.getHijoDer(),null);
 			if(hijoder instanceof NodoID){
 				System.out.println("Nodoid izq");
 				NodoID nodoid_der = (NodoID) hijoder;
@@ -110,7 +121,7 @@ public class Semantico {
 		if(arbol instanceof NodoOpBinaria){
 			System.out.println("NodoOpbinaria");
 			NodoOpBinaria opBinaria = (NodoOpBinaria) arbol;
-			Object hijoizq = recorrer_arbol(opBinaria.getOperandoIzquierdo());
+			Object hijoizq = recorrer_arbol(opBinaria.getOperandoIzquierdo(),null);
 			if(hijoizq instanceof NodoNumero){
 				System.out.println("NodoNumero izq");
 				NodoNumero nodonum_izq = (NodoNumero) hijoizq;
@@ -135,7 +146,7 @@ public class Semantico {
 				}
 			}
 			opBinaria.setOperacion(opBinaria.getOperacion() + opBinaria.getTipo());
-			Object hijoder = recorrer_arbol(opBinaria.getOperandoDerecho());
+			Object hijoder = recorrer_arbol(opBinaria.getOperandoDerecho(),null);
 			if(hijoder instanceof NodoNumero){
 				System.out.println("NodoNumero der");
 				NodoNumero nodonum_der = (NodoNumero) hijoder;
@@ -161,147 +172,131 @@ public class Semantico {
 			}
 			return opBinaria;
 		}
-		if(arbol instanceof NodoSeleccion){
+		if (arbol instanceof NodoSeleccion) {
 			System.out.println("NodoSeleccion");
 			NodoSeleccion sel = (NodoSeleccion) arbol;
-			String operaciones = "";
-			Object hijoizq = recorrer_arbol(sel.getHijoIzq());
-			if(hijoizq instanceof NodoOpAO){
+			Object hijoder = recorrer_arbol(sel.getHijoDer(), null);
+			Table<Integer, String, String> tabla_der;
+			if (hijoder instanceof NodoID) {
+				System.out
+						.println("Es un identificador a la derecha de la seleccion");
+				NodoID nodoid_der = (NodoID) hijoder;
+				tabla_der = tablas.obtener_table(nodoid_der.getCadena());
+			} else {
+				System.out.println("Es un resultado de una expresion");
+				tabla_der = obtener_resultado_nodo(hijoder);
+			}
+			Object hijoizq = recorrer_arbol(sel.getHijoIzq(), tabla_der);
+			if (hijoizq instanceof NodoOpAO) {
 				System.out.println("NodoOpAO izq");
 				NodoOpAO ao_izq = (NodoOpAO) hijoizq;
-				operaciones = ao_izq.getOperacion();
-			}
-			else{
-				if(hijoizq instanceof NodoOpComp){
+				sel.setResultado(ao_izq.getResultado());
+			} else {
+				if (hijoizq instanceof NodoOpComp) {
 					System.out.println("NodoOpComp izq");
 					NodoOpComp opcomp_izq = (NodoOpComp) hijoizq;
-					operaciones = opcomp_izq.getOperacion();
-				}
-				else{
-					if(hijoizq instanceof NodoOpNot){
+					sel.setResultado(opcomp_izq.getResultado());
+				} else {
+					if (hijoizq instanceof NodoOpNot) {
 						System.out.println("NodoOpNot izq");
 						NodoOpNot opnot_izq = (NodoOpNot) hijoizq;
-						operaciones = opnot_izq.getOperacion();
-					}
-					else{
-						System.out.println("Error: el hijo izq de Seleccion no es una comparacion, ANDOR, NOT");
+						sel.setResultado(opnot_izq.getResultado());
+					} else {
+						System.out
+								.println("Error: el hijo izq de Seleccion no es una comparacion, ANDOR, NOT");
 						System.exit(1);
 					}
 				}
 			}
-			Object hijoder = recorrer_arbol(sel.getHijoDer());
-			if(hijoder instanceof NodoID){
-				System.out.println("Es un identificador a la derecha de la seleccion");
-				NodoID nodoid_der = (NodoID) hijoder;
-				//Hacer operacion sobre la tabla y guardar el resultado
-				//sel.setResultado("Es una seleccion de la tabla " + nodoid_der.getCadena() + " de las operaciones " + operaciones);
-			}
-			else{
-				System.out.println("Es un resultado de una expresion");
-				//obtener resultado, hacer la proyeccion y guardar en resultado
-				//sel.setResultado("Es una seleccion del resultado " + obtener_resultado_nodo(hijoder) + " de las operaciones " + operaciones);
-			}
 			return sel;
 		}
-		if(arbol instanceof NodoOpAO){
+		if (arbol instanceof NodoOpAO) {
 			System.out.println("NodoOpAO");
 			NodoOpAO nodoAO = (NodoOpAO) arbol;
-			Object hijoizq = recorrer_arbol(nodoAO.getLogicaIzq());
-			String operaciones = "";
-			if(hijoizq instanceof NodoOpComp){
+			Object hijoizq = recorrer_arbol(nodoAO.getLogicaIzq(), tabla);
+			Table<Integer, String, String> tabla_der, tabla_izq;
+			if (hijoizq instanceof NodoOpComp) {
 				System.out.println("NodoOpComp izq");
 				NodoOpComp opcomp_izq = (NodoOpComp) hijoizq;
-				operaciones = opcomp_izq.getOperacion();
-			}
-			else{
-				if(hijoizq instanceof NodoOpNot){
+				tabla_izq = opcomp_izq.getResultado();
+			} else {
+				if (hijoizq instanceof NodoOpNot) {
 					System.out.println("NodoOpNot izq");
 					NodoOpNot opnot_izq = (NodoOpNot) hijoizq;
-					operaciones = opnot_izq.getOperacion();
-				}
-				else{
-					System.out.println("Error: el hijo izq de OpAND-OR no es una comparacion,NOT");
+					tabla_izq = opnot_izq.getResultado();
+				} else {
+					System.out
+							.println("Error: el hijo izq de OpAND-OR no es una comparacion,NOT");
 					System.exit(1);
 				}
 			}
-			operaciones += " " + nodoAO.getTipo() + " ";
-			Object hijoder = recorrer_arbol(nodoAO.getLogicaDer());
-			if(hijoder instanceof NodoOpComp){
+			Object hijoder = recorrer_arbol(nodoAO.getLogicaDer(), tabla);
+			if (hijoder instanceof NodoOpComp) {
 				System.out.println("NodoOpComp der");
 				NodoOpComp opcomp_der = (NodoOpComp) hijoder;
-				nodoAO.setOperacion(operaciones + opcomp_der.getOperacion());
-			}
-			else{
-				if(hijoder instanceof NodoOpNot){
+				tabla_der = opcomp_der.getResultado();
+			} else {
+				if (hijoder instanceof NodoOpNot) {
 					System.out.println("NodoOpNot der");
 					NodoOpNot opnot_der = (NodoOpNot) hijoder;
-					nodoAO.setOperacion(operaciones + opnot_der.getOperacion());
-				}
-				else{
-					System.out.println("Error: el hijo der de OpAND-OR no es una comparacion,NOT");
+					tabla_der = opnot_der.getResultado();
+				} else {
+					System.out
+							.println("Error: el hijo der de OpAND-OR no es una comparacion,NOT");
 					System.exit(1);
 				}
 			}
+			//Falta hacer la interseccion o la union dependiendo del tipo
 			return nodoAO;
 		}
-		if(arbol instanceof NodoOpComp){
+		if (arbol instanceof NodoOpComp) {
 			System.out.println("NodoOpComp");
 			NodoOpComp nodoopcomp = (NodoOpComp) arbol;
-			Object hijoizq = recorrer_arbol(nodoopcomp.getParteIzq());
-			if(hijoizq instanceof NodoID){
+			String id = "";
+			Object hijoizq = recorrer_arbol(nodoopcomp.getParteIzq(), null);
+			if (hijoizq instanceof NodoID) {
 				System.out.println("NodoID izq");
 				NodoID nodoid_izq = (NodoID) hijoizq;
-				nodoopcomp.setOperacion("" + nodoid_izq.getCadena());
-			}
-			else{
+				id = nodoid_izq.getCadena();
+			} else {
 				System.out.println("Error: el hijo izq de la comparacion no es un identificador");
 				System.exit(1);
 			}
-			nodoopcomp.setOperacion(nodoopcomp.getOperacion() + nodoopcomp.getTipo());
-			Object hijoder = recorrer_arbol(nodoopcomp.getParteDer());
-			if(hijoder instanceof NodoID){
-				System.out.println("NodoID der");
-				NodoID nodoid_der = (NodoID) hijoder;
-				nodoopcomp.setOperacion(nodoopcomp.getOperacion() + nodoid_der.getCadena());
-			}
-			else{
-				if(hijoder instanceof NodoFecha){
-					System.out.println("NodoFecha der");
-					NodoFecha nodofecha_der = (NodoFecha) hijoder;
-					nodoopcomp.setOperacion(nodoopcomp.getOperacion() + nodofecha_der.getFecha().toString());
-				}
-				else{
-					if(hijoder instanceof NodoNumero){
-						System.out.println("NodoNumero der");
-						NodoNumero nodonum_der = (NodoNumero) hijoder;
-						nodoopcomp.setOperacion(nodoopcomp.getOperacion() + nodonum_der.getNumero());
-					}
-					else{
-						if(hijoder instanceof NodoCadena){
-							System.out.println("NodoCadena der");
-							NodoCadena nodocade_der = (NodoCadena) hijoder;
-							nodoopcomp.setOperacion(nodoopcomp.getOperacion() + nodocade_der.getCadena());
-						}
-						else{
-							System.out.println("Error: el hijo der de la comparacion no es un identificador,numero o fecha");
-							System.exit(1);
-						}
+			Object hijoder = recorrer_arbol(nodoopcomp.getParteDer(), null);
+			if (hijoder instanceof NodoFecha) {
+				System.out.println("NodoFecha der");
+				NodoFecha nodofecha_der = (NodoFecha) hijoder;
+				nodoopcomp.setResultado(tablas.Seleccion(tabla, nodoopcomp.getTipo(), id, nodofecha_der));
+			} else {
+				if (hijoder instanceof NodoNumero) {
+					System.out.println("NodoNumero der");
+					NodoNumero nodonum_der = (NodoNumero) hijoder;
+					nodoopcomp.setResultado(tablas.Seleccion(tabla, nodoopcomp.getTipo(), id, nodonum_der));
+				} else {
+					if (hijoder instanceof NodoCadena) {
+						System.out.println("NodoCadena der");
+						NodoCadena nodocade_der = (NodoCadena) hijoder;
+						nodoopcomp.setResultado(tablas.Seleccion(tabla, nodoopcomp.getTipo(), id, nodocade_der));
+					} else {
+						System.out.println("Error: el hijo der de la comparacion no es un identificador,numero o fecha");
+						System.exit(1);
 					}
 				}
 			}
 			return nodoopcomp;
 		}
-		if(arbol instanceof NodoOpNot){
+		if (arbol instanceof NodoOpNot) {
 			System.out.println("NodoOpNot");
 			NodoOpNot nodoopnot = (NodoOpNot) arbol;
-			Object hijo = recorrer_arbol(nodoopnot.getHijounico());
-			if(hijo instanceof NodoOpComp){
+			Object hijo = recorrer_arbol(nodoopnot.getHijounico(), null);
+			if (hijo instanceof NodoOpComp) {
 				System.out.println("NodoOpComp hijo unico");
 				NodoOpComp nodocomp = (NodoOpComp) hijo;
-				nodoopnot.setOperacion("NOT " + nodocomp.getOperacion());
-			}
-			else{
-				System.out.println("Error: el hijo unico de OPNOT no es una comparacion");
+				// RESTA de tabla con el resultado del nodo
+				// nodoopnot.setOperacion("NOT " + nodocomp.getOperacion());
+			} else {
+				System.out
+						.println("Error: el hijo unico de OPNOT no es una comparacion");
 				System.exit(1);
 			}
 			return nodoopnot;
@@ -310,7 +305,7 @@ public class Semantico {
 			System.out.println("NodoOpC");
 			NodoOpC nodoopc = (NodoOpC) arbol;
 			Table <Integer,String,String> izq,der;
-			Object hijoizq = recorrer_arbol(nodoopc.getTablaIzq());
+			Object hijoizq = recorrer_arbol(nodoopc.getTablaIzq(),null);
 			if(hijoizq instanceof NodoID){
 				System.out.println("Es un identificador a la izquierda de la Union");
 				NodoID nodoid_izq = (NodoID) hijoizq;
@@ -319,7 +314,7 @@ public class Semantico {
 				izq=obtener_resultado_nodo(hijoizq);
 				
 			}
-			Object hijoder = recorrer_arbol(nodoopc.getTablaDer());
+			Object hijoder = recorrer_arbol(nodoopc.getTablaDer(),null);
 			if(hijoder instanceof NodoID){
 				System.out.println("Es un identificador a la derecha de la Union");
 				NodoID nodoid_der = (NodoID) hijoder;

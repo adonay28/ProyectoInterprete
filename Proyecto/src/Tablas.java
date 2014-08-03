@@ -2,16 +2,20 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ArrayTable;
+import AST.NodoBase;
+import AST.NodoCadena;
+import AST.NodoFecha;
+import AST.NodoNumero;
+
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -70,7 +74,7 @@ public class Tablas {
 		        		String[] filas = linea.split(";");
 			            for (int i = 0; i < filas.length; i++) {
 			               String remplazado= filas[i].replace("\"", "");
-			               tabla.put(clinea+1, nombre_columna.get(i)+":"+(i+1), remplazado);
+			               tabla.put(clinea+1, nombre_columna.get(i), remplazado);
 			            }
 		        	}
 		        	clinea++;
@@ -97,52 +101,220 @@ public class Tablas {
 		System.out.println(t.Proyeccion(a,t.obtener_table("usu_car")));
 	}
 	
-	Table<Integer, String, String> Proyeccion(List<String> lcol,Table<Integer, String, String> tabla){
+	Table<Integer, String, String> Proyeccion(List<String> lcol,
+			Table<Integer, String, String> tabla) {
 		Table<Integer, String, String> temporal = HashBasedTable.create();
-		int c = 0;
+		int c = 2;
+		Map<String, String> map1 = tabla.row(0);
+		Map<String, String> map2 = tabla.row(1);
+		Set<String> set = map1.keySet();
+		for (int i = 0; i < lcol.size(); i++) {
+			temporal.put(0, "columna" + i, lcol.get(i));
+			temporal.put(1, "tipo" + i, map2.get("tipo" + i));
+		}
 		for (int key = 2; key < tabla.rowKeySet().size(); key++) {
 			for (int i = 0; i < lcol.size(); i++) {
-				Map<String,String> map = tabla.row(key);
-				if(map.containsKey(lcol.get(i))){
+				Map<String, String> map = tabla.row(key);
+				if (map.containsKey(lcol.get(i))) {
 					String valor = map.get(lcol.get(i));
 					temporal.put(c, lcol.get(i), valor);
-				}
-				else{
+				} else {
 					System.out.println("Error: columna no existe");
 					System.exit(1);
 				}
-			}			
+			}
 			c++;
 		}
 		return temporal;
 	}
 	
-	Table<Integer, String, String> Seleccion(String lcol,Table<Integer, String, String> tabla){
+	Table<Integer, String, String> Seleccion(Table<Integer, String, String> tabla, String comp, String id,
+			NodoBase valor) {
 		Table<Integer, String, String> temporal = HashBasedTable.create();
-		int c = 0;
-		String[] aux = lcol.split(",");
-		for (int key = 2; key < tabla.rowKeySet().size(); key++) {
-			Map<String,String> map = tabla.row(key);
-			if(map.containsKey(aux[0])){
-				String valor = map.get(aux[0]);
-				if(aux[1].equals("EQ")){
-					if(valor.equals(aux[2])){
-						
+		int fila = 0;
+		for (int key = 0; key < tabla.rowKeySet().size(); key++) {
+			if (key >= 2) {
+				Map<String, String> map = tabla.row(key);
+				String valor_tabla = map.get(id);
+				if (valor instanceof NodoFecha) {
+					Date fecha_tabla = new Date(valor_tabla);
+					Date fecha_valor = new Date(((NodoFecha) valor).getFecha());
+					if (comp.equals("EQ")) {
+						if (fecha_tabla.equals(fecha_valor)) {
+							Set<String> set = map.keySet();
+							for (Iterator<String> it = set.iterator(); it
+									.hasNext();) {
+								String columna = it.next();
+								temporal.put(fila, columna, map.get(columna));
+								fila++;
+							}
+						}
+					} else {
+						if (comp.equals("DIFERENTE")) {
+							if (fecha_tabla.after(fecha_valor)
+									|| fecha_tabla.before(fecha_valor)) {
+								Set<String> set = map.keySet();
+								for (Iterator<String> it = set.iterator(); it
+										.hasNext();) {
+									String columna = it.next();
+									temporal.put(fila, columna,
+											map.get(columna));
+								}
+								fila++;
+							}
+						} else {
+							if (comp.equals("MAYOR")) {
+								if (fecha_tabla.after(fecha_valor)) {
+									Set<String> set = map.keySet();
+									for (Iterator<String> it = set.iterator(); it
+											.hasNext();) {
+										String columna = it.next();
+										temporal.put(fila, columna,
+												map.get(columna));
+									}
+									fila++;
+								}
+							} else {
+								if (comp.equals("MENOR")) {
+									if (fecha_tabla.before(fecha_valor)) {
+										Set<String> set = map.keySet();
+										for (Iterator<String> it = set
+												.iterator(); it.hasNext();) {
+											String columna = it.next();
+											temporal.put(fila, columna,
+													map.get(columna));
+										}
+										fila++;
+									}
+								}
+							}
+						}
 					}
 				}
-				else{
-					//otras
+				if (valor instanceof NodoNumero) {
+					int num_tabla = Integer.valueOf(valor_tabla);
+					int num_valor = ((NodoNumero) valor).getNumero();
+					if (comp.equals("EQ")) {
+						if (num_tabla == num_valor) {
+							Set<String> set = map.keySet();
+							for (Iterator<String> it = set.iterator(); it
+									.hasNext();) {
+								String columna = it.next();
+								temporal.put(fila, columna, map.get(columna));
+							}
+							fila++;
+						}
+					} else {
+						if (comp.equals("DIFERENTE")) {
+							if (num_tabla != num_valor) {
+								Set<String> set = map.keySet();
+								for (Iterator<String> it = set.iterator(); it
+										.hasNext();) {
+									String columna = it.next();
+									temporal.put(fila, columna,
+											map.get(columna));
+								}
+								fila++;
+							}
+						} else {
+							if (comp.equals("MAYOR")) {
+								if (num_tabla > num_valor) {
+									Set<String> set = map.keySet();
+									for (Iterator<String> it = set.iterator(); it
+											.hasNext();) {
+										String columna = it.next();
+										temporal.put(fila, columna,
+												map.get(columna));
+									}
+									fila++;
+								}
+							} else {
+								if (comp.equals("MENOR")) {
+									if (num_tabla < num_valor) {
+										Set<String> set = map.keySet();
+										for (Iterator<String> it = set
+												.iterator(); it.hasNext();) {
+											String columna = it.next();
+											temporal.put(fila, columna,
+													map.get(columna));
+										}
+										fila++;
+									}
+								}
+							}
+						}
+					}
+				}
+				if (valor instanceof NodoCadena) {
+					String cadena_valor = ((NodoCadena) valor).getCadena();
+					if (comp.equals("EQ")) {
+						if (valor_tabla.equals(cadena_valor)) {
+							Set<String> set = map.keySet();
+							for (Iterator<String> it = set.iterator(); it
+									.hasNext();) {
+								String columna = it.next();
+								temporal.put(fila, columna, map.get(columna));
+							}
+							fila++;
+						}
+					} else {
+						if (comp.equals("DIFERENTE")) {
+							if (!valor_tabla.equals(cadena_valor)) {
+								Set<String> set = map.keySet();
+								for (Iterator<String> it = set.iterator(); it
+										.hasNext();) {
+									String columna = it.next();
+									temporal.put(fila, columna,
+											map.get(columna));
+								}
+								fila++;
+							}
+						} else {
+							if (comp.equals("MAYOR")) {
+								if (valor_tabla.length() > cadena_valor
+										.length()) {
+									Set<String> set = map.keySet();
+									for (Iterator<String> it = set.iterator(); it
+											.hasNext();) {
+										String columna = it.next();
+										temporal.put(fila, columna,
+												map.get(columna));
+									}
+									fila++;
+								}
+							} else {
+								if (comp.equals("MENOR")) {
+									if (valor_tabla.length() < cadena_valor
+											.length()) {
+										Set<String> set = map.keySet();
+										for (Iterator<String> it = set
+												.iterator(); it.hasNext();) {
+											String columna = it.next();
+											temporal.put(fila, columna,
+													map.get(columna));
+										}
+										fila++;
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 			else{
-				System.out.println("Error: columna no existe");
-				System.exit(1);
+				Map<String, String> map = tabla.row(0);
+				Map<String, String> map2 = tabla.row(1);
+				Set<String> set = map.keySet();
+				for (int i = 0; i < set.size(); i++) {
+					temporal.put(0, "columna" + i, map.get("columna" + i));
+					temporal.put(1, "tipo" + i, map2.get("tipo" + i));
+				}
+				fila = 2;
 			}
-			c++;
 		}
 		return temporal;
 	}
-	
+
 	Table<Integer, String, String> Union(Table<Integer, String, String> tabla1,Table<Integer, String, String> tabla2){
 
 		Table<Integer, String, String> temporal = HashBasedTable.create();
@@ -156,7 +328,7 @@ public class Tablas {
 			String columna = it.next();
 			colI.add(columna);	
 		}
-		colIO.addAll(Ordenar(colI));
+		colIO.addAll(Ordenar(tabla1));
 		
 		int i;
 		if (tabla1.columnKeySet().size()==tabla2.columnKeySet().size()) {
@@ -202,13 +374,9 @@ public class Tablas {
 		Table<Integer, String, String> temporal = HashBasedTable.create();
 		List<String> colI = new ArrayList<String>();
 		List<String> colIO = new ArrayList<String>();
-		Object colIT[] = tabla1.columnKeySet().toArray();
 		List<String> colD = new ArrayList<String>();
 		List<String> colDO = new ArrayList<String>();
-		Object colDT[] = tabla2.columnKeySet().toArray();
 		int coniguals;
-		int regI = tabla1.rowKeySet().size();
-		int regD = tabla2.rowKeySet().size();
 		Boolean agregar;
 		Set<String> columnas = tabla1.row(2).keySet();
 		Set<String> columnas2 = tabla2.row(2).keySet();
@@ -216,13 +384,13 @@ public class Tablas {
 			String columna = it.next();
 			colI.add(columna);	
 		}
-		colIO.addAll(Ordenar(colI));
+		colIO.addAll(Ordenar(tabla1));
 		
 		for(Iterator<String> it = columnas2.iterator(); it.hasNext();){
 			String columna = it.next();
 			colD.add(columna);	
 		}
-		colDO.addAll(Ordenar(colD));
+		colDO.addAll(Ordenar(tabla2));
 		
 		if (colIO.size()==colDO.size()) {
 			
@@ -292,13 +460,13 @@ public class Tablas {
 			String columna = it.next();
 			colI.add(columna);	
 		}
-		colIO.addAll(Ordenar(colI));
+		colIO.addAll(Ordenar(tabla1));
 		
 		for(Iterator<String> it = columnas2.iterator(); it.hasNext();){
 			String columna = it.next();
 			colD.add(columna);	
 		}
-		colDO.addAll(Ordenar(colD));
+		colDO.addAll(Ordenar(tabla2));
 			
 		if (colIO.size()==colDO.size()) {
 				for (Integer keyI : tabla1.rowKeySet()) {
@@ -349,22 +517,13 @@ public class Tablas {
 		return temporal;
 	}
 
-	public List<String> Ordenar(List<String> nordenado){
-		List<String> ordenado = new ArrayList<String>();
-		String[] columnas = new String[2];
-		for (int i = 0; i < nordenado.size(); i++) {
-			for (int j = 0; j < nordenado.size(); j++) {
-				String[] separar = nordenado.get(j).split(":");
-	            columnas[0]=separar[0];
-	            columnas[1]=separar[1];
-	            if (Integer.parseInt(columnas[1])==(i+1)) {
-					ordenado.add(columnas[0]+":"+columnas[1]);
-					break;
-				}
-			}
+	public List<String> Ordenar(Table<Integer, String, String> tabla){
+		List<String> ordenada = new ArrayList<String>();
+		Set<String> set = tabla.row(0).keySet();
+		for (int i = 0; i < set.size(); i++) {
+			ordenada.add(tabla.get(0, "columna" + i));
 		}
-		
-		return ordenado;
+		return ordenada;
 	}
 	
 	public void mostrar_tablas(Table<Integer, String, String> tabla) {

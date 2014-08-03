@@ -1,19 +1,17 @@
 package AST;
 
-import java.util.Date;
-
 public class NodoFecha extends NodoBase{
-	Date fecha;
+	String fecha;
 
-	public Date getFecha() {
+	public String getFecha() {
 		return fecha;
 	}
 
-	public void setFecha(Date fecha) {
+	public void setFecha(String fecha) {
 		this.fecha = fecha;
 	}
 
-	public NodoFecha(Date fecha) {
+	public NodoFecha(String fecha) {
 		super();
 		this.fecha = fecha;
 	}
