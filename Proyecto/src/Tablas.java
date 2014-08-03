@@ -215,8 +215,9 @@ public class Tablas {
 									.hasNext();) {
 								String columna = it.next();
 								temporal.put(fila, columna, map.get(columna));
-								fila++;
+								
 							}
+							fila++;
 						}
 					} else {
 						if (comp.equals("DIFERENTE")) {
@@ -425,11 +426,18 @@ public class Tablas {
 				if (keyI >= 2) {
 					Map<String, String> map = tabla1.row(keyI);
 					Set<String> set = map.keySet();
+					Map<String,String> mapacol = tabla1.row(0); 
+					Set<String> setco = mapacol.keySet();
 					int i=0;
 					for (Iterator<String> it = set.iterator(); it.hasNext();) {
 						String columna = it.next();
+						for (Iterator<String> it2 = setco.iterator(); it2.hasNext();) {
+							String indice = it2.next();
+							if(mapacol.get(indice).equals(columna)){
+								i = Integer.valueOf(indice.replace("columna", ""));
+							}
+						}
 						temporal.put(CantReg, "["+i+"]", map.get(columna));
-						i++;
 					}
 					CantReg++;
 				}
@@ -438,11 +446,18 @@ public class Tablas {
 				if (keyD >= 2){
 					Map<String, String> map = tabla2.row(keyD);
 					Set<String> set = map.keySet();
+					Map<String,String> mapacol = tabla2.row(0); 
+					Set<String> setco = mapacol.keySet();
 					int i=0;
 					for (Iterator<String> it = set.iterator(); it.hasNext();) {
 						String columna = it.next();
+						for (Iterator<String> it2 = setco.iterator(); it2.hasNext();) {
+							String indice = it2.next();
+							if(mapacol.get(indice).equals(columna)){
+								i = Integer.valueOf(indice.replace("columna", ""));
+							}
+						}
 						temporal.put(CantReg, "["+i+"]", map.get(columna));
-						i++;
 					}
 					CantReg++;
 				}
@@ -480,6 +495,8 @@ public class Tablas {
 
 		if (colIO.size() == colDO.size()) {
 			int CantReg = 0;
+			Map<String,String> mapacol = tabla1.row(0); 
+			Set<String> setco = mapacol.keySet();
 			for (Integer keyI : tabla1.rowKeySet()) {
 				Map<String, String> map = tabla1.row(keyI);
 				Set<String> set = map.keySet();
@@ -523,8 +540,13 @@ public class Tablas {
 						int i=0;
 						for (Iterator<String> it = set.iterator(); it.hasNext();) {
 							String columna = it.next();
+							for (Iterator<String> it2 = setco.iterator(); it2.hasNext();) {
+								String indice = it2.next();
+								if(mapacol.get(indice).equals(columna)){
+									i = Integer.valueOf(indice.replace("columna", ""));
+								}
+							}
 							temporal.put(CantReg, "["+i+"]", map.get(columna));
-							i++;
 						}
 						CantReg++;
 					}
@@ -571,6 +593,8 @@ public class Tablas {
 
 		if (colIO.size() == colDO.size()) {
 			int CantReg = 0;
+			Map<String,String> mapacol = tabla1.row(0); 
+			Set<String> setco = mapacol.keySet();
 			for (Integer keyI : tabla1.rowKeySet()) {
 				Map<String, String> map = tabla1.row(keyI);
 				Set<String> set = map.keySet();
@@ -604,9 +628,16 @@ public class Tablas {
 						}
 					}
 					if (agregar) {
+						int i=0;
 						for (Iterator<String> it = set.iterator(); it.hasNext();) {
 							String columna = it.next();
-							temporal.put(CantReg, columna, map.get(columna));
+							for (Iterator<String> it2 = setco.iterator(); it2.hasNext();) {
+								String indice = it2.next();
+								if(mapacol.get(indice).equals(columna)){
+									i = Integer.valueOf(indice.replace("columna", ""));
+								}
+							}
+							temporal.put(CantReg, "["+i+"]", map.get(columna));
 						}
 						CantReg++;
 					}
