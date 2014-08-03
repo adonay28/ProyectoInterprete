@@ -120,16 +120,22 @@ public class Tablas {
 			Map<String, String> map2 = tabla.row(1);
 			Set<String> set = map1.keySet();
 			int y = 0;
+			boolean encontro;
 			for (int i = 0; i < lcol.size(); i++) {
+				encontro = false;
 				for (Iterator<String> it = set.iterator(); it.hasNext();) {
 					String columna = it.next();
 					String valor = map1.get(columna);
-					if (valor.equals(lcol.get(i)))
-						y = i;
+					if (valor.equals(lcol.get(i))){
+						String num = columna.replace("columna", "");
+						y = Integer.valueOf(num);
+						encontro = true;
+					}
 				}
-
-				temporal.put(0, "columna" + y, lcol.get(i));
-				temporal.put(1, "tipo" + y, map2.get("tipo" + y));
+				if(encontro){
+					temporal.put(0, "columna" + i, lcol.get(i));
+					temporal.put(1, "tipo" + i, map2.get("tipo" + y));
+				}
 			}
 			for (int key = 2; key < tabla.rowKeySet().size(); key++) {
 				for (int i = 0; i < lcol.size(); i++) {
