@@ -31,7 +31,7 @@ public class Semantico {
 		if(arbol instanceof NodoProyeccion){
 			System.out.println("NodoProyeccion");
 			NodoProyeccion pro = (NodoProyeccion) arbol;
-			Object hijoizq = recorrer_arbol(pro.getHijoIzq(),null);
+			Object hijoizq = recorrer_arbol(pro.getHijoIzq(),tabla);
 			List<String> atributos = new ArrayList<String>();
 			if(hijoizq instanceof NodoID) {
 				System.out.println("Un solo atributo");
@@ -49,7 +49,7 @@ public class Semantico {
 					System.exit(1);
 				}
 			}
-			Object hijoder = recorrer_arbol(pro.getHijoDer(),null);
+			Object hijoder = recorrer_arbol(pro.getHijoDer(),tabla);
 			if(hijoder instanceof NodoID){
 				System.out.println("Es un identificador a la derecha de la proyeccion");
 				NodoID nodoid_der = (NodoID) hijoder;
@@ -68,7 +68,7 @@ public class Semantico {
 		if(arbol instanceof NodoComa){
 			System.out.println("NodoComa");
 			NodoComa coma = (NodoComa) arbol;
-			Object hijoizq = recorrer_arbol(coma.getHijoIzq(),null);
+			Object hijoizq = recorrer_arbol(coma.getHijoIzq(),tabla);
 			if(hijoizq instanceof NodoID){
 				System.out.println("Nodoid izq");
 				NodoID nodoid_izq = (NodoID) hijoizq;
@@ -92,7 +92,7 @@ public class Semantico {
 					}
 				}
 			}
-			Object hijoder = recorrer_arbol(coma.getHijoDer(),null);
+			Object hijoder = recorrer_arbol(coma.getHijoDer(),tabla);
 			if(hijoder instanceof NodoID){
 				System.out.println("Nodoid izq");
 				NodoID nodoid_der = (NodoID) hijoder;
@@ -121,7 +121,7 @@ public class Semantico {
 		if(arbol instanceof NodoOpBinaria){
 			System.out.println("NodoOpbinaria");
 			NodoOpBinaria opBinaria = (NodoOpBinaria) arbol;
-			Object hijoizq = recorrer_arbol(opBinaria.getOperandoIzquierdo(),null);
+			Object hijoizq = recorrer_arbol(opBinaria.getOperandoIzquierdo(),tabla);
 			if(hijoizq instanceof NodoNumero){
 				System.out.println("NodoNumero izq");
 				NodoNumero nodonum_izq = (NodoNumero) hijoizq;
@@ -146,7 +146,7 @@ public class Semantico {
 				}
 			}
 			opBinaria.setOperacion(opBinaria.getOperacion() + opBinaria.getTipo());
-			Object hijoder = recorrer_arbol(opBinaria.getOperandoDerecho(),null);
+			Object hijoder = recorrer_arbol(opBinaria.getOperandoDerecho(),tabla);
 			if(hijoder instanceof NodoNumero){
 				System.out.println("NodoNumero der");
 				NodoNumero nodonum_der = (NodoNumero) hijoder;
@@ -175,7 +175,7 @@ public class Semantico {
 		if (arbol instanceof NodoSeleccion) {
 			System.out.println("NodoSeleccion");
 			NodoSeleccion sel = (NodoSeleccion) arbol;
-			Object hijoder = recorrer_arbol(sel.getHijoDer(), null);
+			Object hijoder = recorrer_arbol(sel.getHijoDer(), tabla);
 			Table<Integer, String, String> tabla_der;
 			if (hijoder instanceof NodoID) {
 				System.out
@@ -214,7 +214,7 @@ public class Semantico {
 			System.out.println("NodoOpAO");
 			NodoOpAO nodoAO = (NodoOpAO) arbol;
 			Object hijoizq = recorrer_arbol(nodoAO.getLogicaIzq(), tabla);
-			Table<Integer, String, String> tabla_der = null, tabla_izq = null;
+			Table<Integer, String, String> tabla_der = tabla, tabla_izq = tabla;
 			if (hijoizq instanceof NodoOpComp) {
 				System.out.println("NodoOpComp izq");
 				NodoOpComp opcomp_izq = (NodoOpComp) hijoizq;
@@ -258,7 +258,7 @@ public class Semantico {
 			System.out.println("NodoOpComp");
 			NodoOpComp nodoopcomp = (NodoOpComp) arbol;
 			String id = "";
-			Object hijoizq = recorrer_arbol(nodoopcomp.getParteIzq(), null);
+			Object hijoizq = recorrer_arbol(nodoopcomp.getParteIzq(), tabla);
 			if (hijoizq instanceof NodoID) {
 				System.out.println("NodoID izq");
 				NodoID nodoid_izq = (NodoID) hijoizq;
@@ -267,7 +267,7 @@ public class Semantico {
 				System.out.println("Error: el hijo izq de la comparacion no es un identificador");
 				System.exit(1);
 			}
-			Object hijoder = recorrer_arbol(nodoopcomp.getParteDer(), null);
+			Object hijoder = recorrer_arbol(nodoopcomp.getParteDer(), tabla);
 			if (hijoder instanceof NodoFecha) {
 				System.out.println("NodoFecha der");
 				NodoFecha nodofecha_der = (NodoFecha) hijoder;
@@ -311,7 +311,7 @@ public class Semantico {
 			System.out.println("NodoOpC");
 			NodoOpC nodoopc = (NodoOpC) arbol;
 			Table <Integer,String,String> izq,der;
-			Object hijoizq = recorrer_arbol(nodoopc.getTablaIzq(),null);
+			Object hijoizq = recorrer_arbol(nodoopc.getTablaIzq(),tabla);
 			if(hijoizq instanceof NodoID){
 				System.out.println("Es un identificador a la izquierda de la Union");
 				NodoID nodoid_izq = (NodoID) hijoizq;
@@ -320,7 +320,7 @@ public class Semantico {
 				izq=obtener_resultado_nodo(hijoizq);
 				
 			}
-			Object hijoder = recorrer_arbol(nodoopc.getTablaDer(),null);
+			Object hijoder = recorrer_arbol(nodoopc.getTablaDer(),tabla);
 			if(hijoder instanceof NodoID){
 				System.out.println("Es un identificador a la derecha de la Union");
 				NodoID nodoid_der = (NodoID) hijoder;
@@ -364,7 +364,7 @@ public class Semantico {
 			System.out.println("NodoFecha");
 			return arbol;
 		}
-		return null;
+		return tabla;
 	}
 	
 	public Table<Integer, String, String> obtener_resultado_nodo(Object nodo){
