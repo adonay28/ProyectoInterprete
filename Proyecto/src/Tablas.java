@@ -150,7 +150,7 @@ public class Tablas {
 			System.out.println("Error: columna no existe");
 			System.exit(1);
 		}
-		return temporal;
+		return Filtrar(temporal);
 	}
 
 	Table<Integer, String, String> Seleccion(
@@ -411,7 +411,7 @@ public class Tablas {
 						int i=0;
 						for (Iterator<String> it = set.iterator(); it.hasNext();) {
 							String columna = it.next();
-							temporal.put(CantReg, columna,"["+i+"]");
+							temporal.put(CantReg, columna,"campo"+i);
 							i++;
 						}
 						CantReg++;
@@ -437,7 +437,7 @@ public class Tablas {
 								i = Integer.valueOf(indice.replace("columna", ""));
 							}
 						}
-						temporal.put(CantReg, "["+i+"]", map.get(columna));
+						temporal.put(CantReg, "campo"+i, map.get(columna));
 					}
 					CantReg++;
 				}
@@ -457,13 +457,13 @@ public class Tablas {
 								i = Integer.valueOf(indice.replace("columna", ""));
 							}
 						}
-						temporal.put(CantReg, "["+i+"]", map.get(columna));
+						temporal.put(CantReg, "campo"+i, map.get(columna));
 					}
 					CantReg++;
 				}
 			}
 		}
-		return temporal;
+		return Filtrar(temporal);
 
 	}
 
@@ -505,7 +505,7 @@ public class Tablas {
 						int i=0;
 						for (Iterator<String> it = set.iterator(); it.hasNext();) {
 							String columna = it.next();
-							temporal.put(CantReg, columna,"["+i+"]");
+							temporal.put(CantReg, columna,"campo"+i);
 							i++;
 						}
 						CantReg++;
@@ -546,7 +546,7 @@ public class Tablas {
 									i = Integer.valueOf(indice.replace("columna", ""));
 								}
 							}
-							temporal.put(CantReg, "["+i+"]", map.get(columna));
+							temporal.put(CantReg, "campo"+i, map.get(columna));
 						}
 						CantReg++;
 					}
@@ -637,7 +637,7 @@ public class Tablas {
 									i = Integer.valueOf(indice.replace("columna", ""));
 								}
 							}
-							temporal.put(CantReg, "["+i+"]", map.get(columna));
+							temporal.put(CantReg, "campo"+i, map.get(columna));
 						}
 						CantReg++;
 					}
