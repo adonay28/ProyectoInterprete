@@ -149,9 +149,51 @@ public class Tablas {
 
 	Table<Integer, String, String> Seleccion(
 			Table<Integer, String, String> tabla, String comp, String id,
-			NodoBase valor) {
+			NodoBase valor, String nombre_tabla) {
 		Table<Integer, String, String> temporal = HashBasedTable.create();
-		//semantico.tabla_simbolos.consultar(nombre_tabla, columna)
+		String consultar = semantico.tabla_simbolos.consultar(nombre_tabla, id);
+		if(consultar != null){
+			if(consultar.equals("cadena")){
+				if(valor instanceof NodoCadena){
+					//Todo bien
+				}
+				else{
+					if(valor instanceof NodoNumero)
+						System.out.println("Error: tipos no coinciden cadena:numero");
+					if(valor instanceof NodoFecha)
+						System.out.println("Error: tipos no coinciden cadena:fecha");
+					System.exit(1);
+				}
+			}
+			if(consultar.equals("entero")){
+				if(valor instanceof NodoNumero){
+					//Todo bien
+				}
+				else{
+					if(valor instanceof NodoCadena)
+						System.out.println("Error: tipos no coinciden numero:cadena");
+					if(valor instanceof NodoFecha)
+						System.out.println("Error: tipos no coinciden numero:fecha");
+					System.exit(1);
+				}
+			}
+			if(consultar.equals("fecha")){
+				if(valor instanceof NodoFecha){
+					//Todo bien
+				}
+				else{
+					if(valor instanceof NodoNumero)
+						System.out.println("Error: tipos no coinciden fecha:numero");
+					if(valor instanceof NodoCadena)
+						System.out.println("Error: tipos no coinciden fecha:cadena");
+					System.exit(1);
+				}
+			}
+		}
+		else{
+			System.out.println("Error: columna no existe");
+			System.exit(1);
+		}
 		int fila = 0;
 		for (int key = 0; key < tabla.rowKeySet().size(); key++) {
 			if (key >= 2) {
@@ -336,10 +378,10 @@ public class Tablas {
 	}
 
 	Table<Integer, String, String> Union(Table<Integer, String, String> tabla1,
-			Table<Integer, String, String> tabla2) {
+			Table<Integer, String, String> tabla2, String nombre_tabla_1, String nombre_tabla_2) {
 
 		Table<Integer, String, String> temporal = HashBasedTable.create();
-
+		verificador(nombre_tabla_1, nombre_tabla_2);
 		Set<String> columnas = tabla1.row(2).keySet();
 
 		Object col[] = tabla1.columnKeySet().toArray();
@@ -391,9 +433,10 @@ public class Tablas {
 
 	Table<Integer, String, String> Interseccion(
 			Table<Integer, String, String> tabla1,
-			Table<Integer, String, String> tabla2) {
+			Table<Integer, String, String> tabla2, String nombre_tabla_1, String nombre_tabla_2) {
 
 		Table<Integer, String, String> temporal = HashBasedTable.create();
+		verificador(nombre_tabla_1, nombre_tabla_2);
 		List<String> colI = new ArrayList<String>();
 		List<String> colIO = new ArrayList<String>();
 		List<String> colD = new ArrayList<String>();
@@ -461,9 +504,9 @@ public class Tablas {
 
 	Table<Integer, String, String> Diferencia(
 			Table<Integer, String, String> tabla1,
-			Table<Integer, String, String> tabla2) {
+			Table<Integer, String, String> tabla2, String nombre_tabla_1, String nombre_tabla_2) {
 		Table<Integer, String, String> temporal = HashBasedTable.create();
-
+		verificador(nombre_tabla_1, nombre_tabla_2);
 		int regI = tabla1.rowKeySet().size();
 		int regD = tabla2.rowKeySet().size();
 
@@ -545,7 +588,7 @@ public class Tablas {
 
 	Table<Integer, String, String> Producto(
 			Table<Integer, String, String> tabla1,
-			Table<Integer, String, String> tabla2) {
+			Table<Integer, String, String> tabla2, String nombre_tabla_1, String nombre_tabla_2) {
 		Table<Integer, String, String> temporal = HashBasedTable.create();
 		int CantReg = 0;
 
@@ -634,6 +677,20 @@ public class Tablas {
 				System.out.print(tablas[i][j] + "    ");
 			}
 
+		}
+	}
+	
+	public void verificador(String nombre_tabla_1, String nombre_tabla_2){
+		if(semantico.tabla_simbolos.consultar_nro_columnas(nombre_tabla_1) == semantico.tabla_simbolos.consultar_nro_columnas(nombre_tabla_2)){
+			//Mismo numero de columnas
+			if(semantico.tabla_simbolos.verificar_columnas_tipos(nombre_tabla_1, nombre_tabla_2)){
+				System.out.println("Error: Los tipos de las columnas no coinciden");
+				System.exit(1);
+			}
+		}
+		else{
+			System.out.println("Error: No tienen el mismo numero de columnas");
+			System.exit(1);
 		}
 	}
 }
