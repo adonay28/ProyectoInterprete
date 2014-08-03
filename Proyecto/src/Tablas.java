@@ -330,7 +330,7 @@ public class Tablas {
 		}
 		colIO.addAll(Ordenar(tabla1));
 		
-		int i;
+		
 		if (tabla1.columnKeySet().size()==tabla2.columnKeySet().size()) {
 			int CantReg = 0;
 			for (Integer keyI : tabla1.rowKeySet()) {
@@ -520,6 +520,45 @@ public class Tablas {
 		return temporal;
 	}
 
+	Table<Integer, String, String> Producto(Table<Integer, String, String> tabla1,Table<Integer, String, String> tabla2){
+		Table<Integer, String, String> temporal = HashBasedTable.create();
+		int CantReg = 0;
+		
+			for (Integer keyI : tabla1.rowKeySet()) {
+				Map<String, String> map = tabla1.row(keyI);
+				Set<String> set = map.keySet();
+				for (Integer keyD : tabla2.rowKeySet()) {
+					Map<String, String> map2 = tabla2.row(keyD);
+					Set<String> set2 = map2.keySet();
+					if((keyI==keyD)&&(keyI<2&&keyD<2)){
+						for(Iterator<String> it = set.iterator(); it.hasNext();){
+							String columna = it.next();
+							temporal.put(CantReg,columna,map.get(columna));
+						}
+						int i=0;
+						for(Iterator<String> it = set2.iterator(); it.hasNext();){
+							String columna = it.next();
+							temporal.put(CantReg,"columna"+(tabla1.columnKeySet().size()/3+i),map2.get(columna));
+							i++;
+						}
+						CantReg++;
+					}else{
+						if(keyI>=2&&keyD>=2){
+							for(Iterator<String> it = set.iterator(); it.hasNext();){
+								String columna = it.next();
+								temporal.put(CantReg,columna,map.get(columna));
+							}
+							for(Iterator<String> it = set2.iterator(); it.hasNext();){
+								String columna = it.next();
+								temporal.put(CantReg,columna,map2.get(columna));
+							}
+							CantReg++;
+						}
+					}
+				}
+			}
+		return temporal;
+	}
 	public List<String> Ordenar(Table<Integer, String, String> tabla){
 		List<String> ordenada = new ArrayList<String>();
 		Set<String> set = tabla.row(0).keySet();

@@ -337,7 +337,7 @@ public class Semantico {
 			}
 			if(nodoopc.getTipo().equals("PROC"))
 			{
-				//nodoopc.setResultado(tablas.ProductoC(izq, der));
+				nodoopc.setResultado(tablas.Producto(izq, der));
 			}
 			
 			return nodoopc;
