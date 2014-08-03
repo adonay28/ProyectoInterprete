@@ -6,5 +6,5 @@ Nombre2(cadena);apellido2(cadena);cedula2(entero)
 "luis";"diaz”2;123455
 "carmen";"berbesi2";1123456
 "edwin";"sierra";21779
-"adonay";"porras";2321	
+"adonay";"porras";2321
 "gerardo";"sanchez";20000
