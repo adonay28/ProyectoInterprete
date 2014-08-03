@@ -1,9 +1,0 @@
-identificador(entero);nombre(cadena);ubicacion(cadena)
-"001";"polar";"zulia-mcbo";
-"002";"wendys";"tachira-sc";
-"003";"los_llanos";"tachira-sc";
-"004";"exp_occidente";"caracas-dc";
-"005";"adidas";"merida-merida";
-"006";"nike";"caracas-dc";
-"007";"KFC";"falcon-coro";
-
