@@ -22,7 +22,7 @@ public class Semantico {
 	Tabla_simbolos tabla_simbolos;
 	public Semantico() {
 		// TODO Auto-generated constructor stub
-		tablas = new Tablas("Relaciones/");
+		tablas = new Tablas("Relaciones/",this);
 		tabla_simbolos = new Tabla_simbolos();
 	}
 	public void obtener_resultado(Object arbol){
@@ -64,7 +64,6 @@ public class Semantico {
 				System.out.println("Es un resultado de una expresion");
 				//obtener resultado, hacer la proyeccion y guardar en resultado
 				pro.setResultado(tablas.Proyeccion(atributos, obtener_resultado_nodo(hijoder),obtener_nombre_tabla_nodo(hijoder)));
-				
 			}
 			return pro;
 		}
@@ -180,11 +179,13 @@ public class Semantico {
 			NodoSeleccion sel = (NodoSeleccion) arbol;
 			Object hijoder = recorrer_arbol(sel.getHijoDer(), tabla);
 			Table<Integer, String, String> tabla_der;
+			String nombre_tabla_der;
 			if (hijoder instanceof NodoID) {
 				System.out
 						.println("Es un identificador a la derecha de la seleccion");
 				NodoID nodoid_der = (NodoID) hijoder;
 				tabla_der = tablas.obtener_table(nodoid_der.getCadena());
+				
 			} else {
 				System.out.println("Es un resultado de una expresion");
 				tabla_der = obtener_resultado_nodo(hijoder);

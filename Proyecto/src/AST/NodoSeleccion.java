@@ -6,6 +6,7 @@ public class NodoSeleccion extends NodoBase{
 	NodoBase HijoIzq;
 	NodoBase HijoDer;
 	Table<Integer, String, String> resultado;
+	String nombre_tabla;
 	public NodoSeleccion(NodoBase hijoIzq, NodoBase hijoDer) {
 		super();
 		HijoIzq = hijoIzq;
@@ -28,6 +29,12 @@ public class NodoSeleccion extends NodoBase{
 	}
 	public void setResultado(Table<Integer, String, String> resultado) {
 		this.resultado = resultado;
+	}
+	public String getNombre_tabla() {
+		return nombre_tabla;
+	}
+	public void setNombre_tabla(String nombre_tabla) {
+		this.nombre_tabla = nombre_tabla;
 	}
 	
 	

@@ -21,124 +21,137 @@ import com.google.common.collect.Table;
 
 public class Tablas {
 	List<String> tablas;
-	public Tablas(String carpeta) {
+	Semantico semantico;
+
+	public Tablas(String carpeta, Semantico se) {
 		// TODO Auto-generated constructor stub
 		File folder = new File(carpeta);
 		tablas = listFilesForFolder(folder);
+		this.semantico = se;
 	}
-	
+
 	public List<String> listFilesForFolder(final File folder) {
 		List<String> tablas = new ArrayList<String>();
-	    for (final File fileEntry : folder.listFiles()) {
-	        if (!fileEntry.isDirectory() && !fileEntry.getName().startsWith(".")) {
-	        	tablas.add(fileEntry.getName().replace(".txt", ""));
-	        }
-	    }
+		for (final File fileEntry : folder.listFiles()) {
+			if (!fileEntry.isDirectory()
+					&& !fileEntry.getName().startsWith(".")) {
+				tablas.add(fileEntry.getName().replace(".txt", ""));
+			}
+		}
 		return tablas;
 	}
-	
-	public Table <Integer,String,String> obtener_table(String archivo){
-		Table<Integer,String,String> tabla = HashBasedTable.create();
-		if(tablas.contains(archivo)){
+
+	public Table<Integer, String, String> obtener_table(String archivo) {
+		Table<Integer, String, String> tabla = HashBasedTable.create();
+		if (tablas.contains(archivo)) {
 			FileInputStream fstream;
 			List<String> nombre_columna = new ArrayList<String>();
 			try {
 				fstream = new FileInputStream("Relaciones/" + archivo + ".txt");
-		        DataInputStream entrada = new DataInputStream(fstream);
-		        BufferedReader buffer = new BufferedReader(new InputStreamReader(entrada));
-		        String linea;
-		        int clinea = 0;
-		        while((linea = buffer.readLine()) != null){
-		        	if(clinea == 0){
-		        		String[] sepcomas = linea.split(";");
-		        		int c_columna = 0;
-	        			int c_tipo = 0;
-		        		for (int i = 0; i < sepcomas.length; i++) {
-		        			String columna =  sepcomas[i];
-		        			String[] separar = columna.split("\\(");
-		        			for (int j = 0; j < separar.length; j++) {
-		        				separar[j] = separar[j].replace(")", "");
-		        				if(j % 2 == 0){
-		        					tabla.put(0, "columna" + c_columna, separar[j]);
-		        					nombre_columna.add(separar[j]);
-		        					c_columna++;
-		        				}
-		        				else{
-		        					tabla.put(1, "tipo" + c_tipo, separar[j]);
-		        					c_tipo++;
-		        				}
-		        			}
-		  	            }
-		        	}
-		        	else{
-		        		String[] filas = linea.split(";");
-			            for (int i = 0; i < filas.length; i++) {
-			               String remplazado= filas[i].replace("\"", "");
-			               tabla.put(clinea+1, nombre_columna.get(i), remplazado);
-			            }
-		        	}
-		        	clinea++;
-		        }
-		        fstream.close();
+				DataInputStream entrada = new DataInputStream(fstream);
+				BufferedReader buffer = new BufferedReader(
+						new InputStreamReader(entrada));
+				String linea;
+				int clinea = 0;
+				while ((linea = buffer.readLine()) != null) {
+					if (clinea == 0) {
+						String[] sepcomas = linea.split(";");
+						int c_columna = 0;
+						int c_tipo = 0;
+						for (int i = 0; i < sepcomas.length; i++) {
+							String columna = sepcomas[i];
+							String[] separar = columna.split("\\(");
+							for (int j = 0; j < separar.length; j++) {
+								separar[j] = separar[j].replace(")", "");
+								if (j % 2 == 0) {
+									tabla.put(0, "columna" + c_columna,
+											separar[j]);
+									nombre_columna.add(separar[j]);
+									c_columna++;
+								} else {
+									tabla.put(1, "tipo" + c_tipo, separar[j]);
+									c_tipo++;
+								}
+							}
+						}
+					} else {
+						String[] filas = linea.split(";");
+						for (int i = 0; i < filas.length; i++) {
+							String remplazado = filas[i].replace("\"", "");
+							tabla.put(clinea + 1, nombre_columna.get(i),
+									remplazado);
+						}
+					}
+					clinea++;
+				}
+				fstream.close();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return tabla;
-		}
-		else{
+		} else {
 			System.out.println("Error: relacion no existe");
 			System.exit(1);
 		}
 		return tabla;
 	}
-	
-	public static void main(String args[]){
-		Tablas t = new Tablas("Relaciones/");
+
+	public static void main(String args[]) {
+		// Tablas t = new Tablas("Relaciones/");
 		List<String> a = new ArrayList<String>();
 		a.add("placa");
-		System.out.println(t.obtener_table("usu_car"));
-		//System.out.println(t.Proyeccion(a,t.obtener_table("usu_car")));
+		//System.out.println(t.obtener_table("usu_car"));
+		// System.out.println(t.Proyeccion(a,t.obtener_table("usu_car")));
 	}
-	
+
 	Table<Integer, String, String> Proyeccion(List<String> lcol,
 			Table<Integer, String, String> tabla, String nombre_tabla) {
 		Table<Integer, String, String> temporal = HashBasedTable.create();
-		int c = 2;
-		Map<String, String> map1 = tabla.row(0);
-		Map<String, String> map2 = tabla.row(1);
-		Set<String> set = map1.keySet();
-		int y = 0;
+		boolean error = false;
 		for (int i = 0; i < lcol.size(); i++) {
-			for (Iterator<String> it = set.iterator(); it.hasNext();) {
-				String columna = it.next();
-				String valor = map1.get(columna);
-				if(valor.equals(lcol.get(i)))
-					y = i;
+			if (semantico.tabla_simbolos.consultar(nombre_tabla, lcol.get(i)) == null) {
+				error = true;
 			}
-			
-			temporal.put(0, "columna" + y, lcol.get(i));
-			temporal.put(1, "tipo" + y, map2.get("tipo" + y));
 		}
-		for (int key = 2; key < tabla.rowKeySet().size(); key++) {
+		if (!error) {
+			int c = 2;
+			Map<String, String> map1 = tabla.row(0);
+			Map<String, String> map2 = tabla.row(1);
+			Set<String> set = map1.keySet();
+			int y = 0;
 			for (int i = 0; i < lcol.size(); i++) {
-				Map<String, String> map = tabla.row(key);
-				if (map.containsKey(lcol.get(i))) {
+				for (Iterator<String> it = set.iterator(); it.hasNext();) {
+					String columna = it.next();
+					String valor = map1.get(columna);
+					if (valor.equals(lcol.get(i)))
+						y = i;
+				}
+
+				temporal.put(0, "columna" + y, lcol.get(i));
+				temporal.put(1, "tipo" + y, map2.get("tipo" + y));
+			}
+			for (int key = 2; key < tabla.rowKeySet().size(); key++) {
+				for (int i = 0; i < lcol.size(); i++) {
+					Map<String, String> map = tabla.row(key);
 					String valor = map.get(lcol.get(i));
 					temporal.put(c, lcol.get(i), valor);
-				} else {
-					System.out.println("Error: columna no existe");
-					System.exit(1);
 				}
+				c++;
 			}
-			c++;
+		}
+		else{
+			System.out.println("Error: columna no existe");
+			System.exit(1);
 		}
 		return temporal;
 	}
-	
-	Table<Integer, String, String> Seleccion(Table<Integer, String, String> tabla, String comp, String id,
+
+	Table<Integer, String, String> Seleccion(
+			Table<Integer, String, String> tabla, String comp, String id,
 			NodoBase valor) {
 		Table<Integer, String, String> temporal = HashBasedTable.create();
+		//semantico.tabla_simbolos.consultar(nombre_tabla, columna)
 		int fila = 0;
 		for (int key = 0; key < tabla.rowKeySet().size(); key++) {
 			if (key >= 2) {
@@ -308,8 +321,7 @@ public class Tablas {
 						}
 					}
 				}
-			}
-			else{
+			} else {
 				Map<String, String> map = tabla.row(0);
 				Map<String, String> map2 = tabla.row(1);
 				Set<String> set = map.keySet();
@@ -323,61 +335,63 @@ public class Tablas {
 		return temporal;
 	}
 
-	Table<Integer, String, String> Union(Table<Integer, String, String> tabla1,Table<Integer, String, String> tabla2){
+	Table<Integer, String, String> Union(Table<Integer, String, String> tabla1,
+			Table<Integer, String, String> tabla2) {
 
 		Table<Integer, String, String> temporal = HashBasedTable.create();
-		
+
 		Set<String> columnas = tabla1.row(2).keySet();
-		
+
 		Object col[] = tabla1.columnKeySet().toArray();
 		List<String> colI = new ArrayList<String>();
 		List<String> colIO = new ArrayList<String>();
-		for(Iterator<String> it = columnas.iterator(); it.hasNext();){
+		for (Iterator<String> it = columnas.iterator(); it.hasNext();) {
 			String columna = it.next();
-			colI.add(columna);	
+			colI.add(columna);
 		}
 		colIO.addAll(Ordenar(tabla1));
-		
-		
-		if (tabla1.columnKeySet().size()==tabla2.columnKeySet().size()) {
+
+		if (tabla1.columnKeySet().size() == tabla2.columnKeySet().size()) {
 			int CantReg = 0;
 			for (Integer keyI : tabla1.rowKeySet()) {
-				if(keyI<2){
+				if (keyI < 2) {
 					Map<String, String> map = tabla1.row(keyI);
 					Set<String> set = map.keySet();
-					for(Iterator<String> it = set.iterator(); it.hasNext();){
+					for (Iterator<String> it = set.iterator(); it.hasNext();) {
 						String columna = it.next();
-						temporal.put(CantReg,columna,map.get(columna));
+						temporal.put(CantReg, columna, map.get(columna));
 					}
 					CantReg++;
 				}
-				if(keyI>=2){
+				if (keyI >= 2) {
 					Map<String, String> map = tabla1.row(keyI);
 					Set<String> set = map.keySet();
-					for(Iterator<String> it = set.iterator(); it.hasNext();){
+					for (Iterator<String> it = set.iterator(); it.hasNext();) {
 						String columna = it.next();
-						temporal.put(CantReg,columna,map.get(columna));
+						temporal.put(CantReg, columna, map.get(columna));
 					}
 					CantReg++;
 				}
 			}
 			for (Integer keyD : tabla2.rowKeySet()) {
-				if(keyD>=2){
+				if (keyD >= 2) {
 					Map<String, String> map = tabla2.row(keyD);
 					Set<String> set = map.keySet();
-					for(Iterator<String> it = set.iterator(); it.hasNext();){
+					for (Iterator<String> it = set.iterator(); it.hasNext();) {
 						String columna = it.next();
-						temporal.put(CantReg,columna,map.get(columna));
+						temporal.put(CantReg, columna, map.get(columna));
 					}
 					CantReg++;
 				}
 			}
 		}
 		return temporal;
-		
+
 	}
 
-	Table<Integer, String, String> Interseccion(Table<Integer, String, String> tabla1,Table<Integer, String, String> tabla2){
+	Table<Integer, String, String> Interseccion(
+			Table<Integer, String, String> tabla1,
+			Table<Integer, String, String> tabla2) {
 
 		Table<Integer, String, String> temporal = HashBasedTable.create();
 		List<String> colI = new ArrayList<String>();
@@ -388,126 +402,45 @@ public class Tablas {
 		Boolean agregar;
 		Set<String> columnas = tabla1.row(2).keySet();
 		Set<String> columnas2 = tabla2.row(2).keySet();
-		for(Iterator<String> it = columnas.iterator(); it.hasNext();){
+		for (Iterator<String> it = columnas.iterator(); it.hasNext();) {
 			String columna = it.next();
-			colI.add(columna);	
+			colI.add(columna);
 		}
 		colIO.addAll(Ordenar(tabla1));
-		
-		for(Iterator<String> it = columnas2.iterator(); it.hasNext();){
+
+		for (Iterator<String> it = columnas2.iterator(); it.hasNext();) {
 			String columna = it.next();
-			colD.add(columna);	
+			colD.add(columna);
 		}
 		colDO.addAll(Ordenar(tabla2));
-		
-		if (colIO.size()==colDO.size()) {
+
+		if (colIO.size() == colDO.size()) {
 			int CantReg = 0;
-				for (Integer keyI : tabla1.rowKeySet()){ 
-					Map<String, String> map = tabla1.row(keyI);
-					Set<String> set = map.keySet();
-					if(keyI<2){
-						for(Iterator<String> it = set.iterator(); it.hasNext();){
-							String columna = it.next();
-							temporal.put(keyI,columna,map.get(columna));
-						}
-						CantReg++;
+			for (Integer keyI : tabla1.rowKeySet()) {
+				Map<String, String> map = tabla1.row(keyI);
+				Set<String> set = map.keySet();
+				if (keyI < 2) {
+					for (Iterator<String> it = set.iterator(); it.hasNext();) {
+						String columna = it.next();
+						temporal.put(keyI, columna, map.get(columna));
 					}
-					if (keyI>=2) {				
-						agregar = false;
-						for (Integer keyD : tabla2.rowKeySet()) {
-							
-							coniguals = 0;
-							if(keyD>=2){
-								for (int i = 0; i < colIO.size(); i++) {
-									String A =(tabla1.get(keyI,colIO.get(i)));
-									String B =(tabla2.get(keyD,colDO.get(i)));
-									if(A.equals(B)){
-										coniguals++;
-									}						
-								}
-								if (coniguals==colDO.size()) {
-									agregar = true;
-									break;
-								}
-							}
-						}
-						if (agregar) {
-							for (Iterator<String> it = set.iterator(); it.hasNext();) {
-								String columna = it.next();
-								temporal.put(CantReg,columna,map.get(columna));
-							}
-							CantReg++;
-						}
-					}
+					CantReg++;
 				}
-		}
-		return temporal;
-		
-	}
-
-	Table<Integer, String, String> Diferencia(Table<Integer, String, String> tabla1,Table<Integer, String, String> tabla2){
-		Table<Integer, String, String> temporal = HashBasedTable.create();
-		
-		int regI = tabla1.rowKeySet().size();
-		int regD = tabla2.rowKeySet().size();
-		
-		int coniguals;
-		Object col[] = tabla1.columnKeySet().toArray();
-		Object col2[] = tabla2.columnKeySet().toArray();
-		
-		List<String> colI = new ArrayList<String>();
-		List<String> colIO = new ArrayList<String>();
-		
-		List<String> colD = new ArrayList<String>();
-		List<String> colDO = new ArrayList<String>();
-		
-		Boolean agregar;
-		Set<String> columnas = tabla1.row(2).keySet();
-		Set<String> columnas2 = tabla2.row(2).keySet();
-		
-		for(Iterator<String> it = columnas.iterator(); it.hasNext();){
-			String columna = it.next();
-			colI.add(columna);	
-		}
-		colIO.addAll(Ordenar(tabla1));
-		
-		for(Iterator<String> it = columnas2.iterator(); it.hasNext();){
-			String columna = it.next();
-			colD.add(columna);	
-		}
-		colDO.addAll(Ordenar(tabla2));
-			
-		if (colIO.size()==colDO.size()) {
-			int CantReg = 0;
-				for (Integer keyI : tabla1.rowKeySet()) {
-					Map<String, String> map = tabla1.row(keyI);
-					Set<String> set = map.keySet();
-					if(keyI<2){
-						
-						for(Iterator<String> it = set.iterator(); it.hasNext();){
-							String columna = it.next();
-							temporal.put(keyI,columna,map.get(columna));
-						}
-						CantReg++;
-					}
-					if(keyI>=2)
-					{
-					agregar = true;
-					
+				if (keyI >= 2) {
+					agregar = false;
 					for (Integer keyD : tabla2.rowKeySet()) {
+
 						coniguals = 0;
-						if(keyD>=2){
+						if (keyD >= 2) {
 							for (int i = 0; i < colIO.size(); i++) {
-								String A =(tabla1.get(keyI,colIO.get(i)));
-								String B =(tabla2.get(keyD,colDO.get(i)));
-								if(A.equals(B)){
+								String A = (tabla1.get(keyI, colIO.get(i)));
+								String B = (tabla2.get(keyD, colDO.get(i)));
+								if (A.equals(B)) {
 									coniguals++;
 								}
 							}
-							if (coniguals==colDO.size()) {
-								agregar = false;
-							}
-							if(!agregar){
+							if (coniguals == colDO.size()) {
+								agregar = true;
 								break;
 							}
 						}
@@ -515,70 +448,162 @@ public class Tablas {
 					if (agregar) {
 						for (Iterator<String> it = set.iterator(); it.hasNext();) {
 							String columna = it.next();
-							temporal.put(CantReg,columna,map.get(columna));
+							temporal.put(CantReg, columna, map.get(columna));
 						}
 						CantReg++;
 					}
 				}
+			}
+		}
+		return temporal;
+
+	}
+
+	Table<Integer, String, String> Diferencia(
+			Table<Integer, String, String> tabla1,
+			Table<Integer, String, String> tabla2) {
+		Table<Integer, String, String> temporal = HashBasedTable.create();
+
+		int regI = tabla1.rowKeySet().size();
+		int regD = tabla2.rowKeySet().size();
+
+		int coniguals;
+		Object col[] = tabla1.columnKeySet().toArray();
+		Object col2[] = tabla2.columnKeySet().toArray();
+
+		List<String> colI = new ArrayList<String>();
+		List<String> colIO = new ArrayList<String>();
+
+		List<String> colD = new ArrayList<String>();
+		List<String> colDO = new ArrayList<String>();
+
+		Boolean agregar;
+		Set<String> columnas = tabla1.row(2).keySet();
+		Set<String> columnas2 = tabla2.row(2).keySet();
+
+		for (Iterator<String> it = columnas.iterator(); it.hasNext();) {
+			String columna = it.next();
+			colI.add(columna);
+		}
+		colIO.addAll(Ordenar(tabla1));
+
+		for (Iterator<String> it = columnas2.iterator(); it.hasNext();) {
+			String columna = it.next();
+			colD.add(columna);
+		}
+		colDO.addAll(Ordenar(tabla2));
+
+		if (colIO.size() == colDO.size()) {
+			int CantReg = 0;
+			for (Integer keyI : tabla1.rowKeySet()) {
+				Map<String, String> map = tabla1.row(keyI);
+				Set<String> set = map.keySet();
+				if (keyI < 2) {
+
+					for (Iterator<String> it = set.iterator(); it.hasNext();) {
+						String columna = it.next();
+						temporal.put(keyI, columna, map.get(columna));
+					}
+					CantReg++;
 				}
-		}else{
+				if (keyI >= 2) {
+					agregar = true;
+
+					for (Integer keyD : tabla2.rowKeySet()) {
+						coniguals = 0;
+						if (keyD >= 2) {
+							for (int i = 0; i < colIO.size(); i++) {
+								String A = (tabla1.get(keyI, colIO.get(i)));
+								String B = (tabla2.get(keyD, colDO.get(i)));
+								if (A.equals(B)) {
+									coniguals++;
+								}
+							}
+							if (coniguals == colDO.size()) {
+								agregar = false;
+							}
+							if (!agregar) {
+								break;
+							}
+						}
+					}
+					if (agregar) {
+						for (Iterator<String> it = set.iterator(); it.hasNext();) {
+							String columna = it.next();
+							temporal.put(CantReg, columna, map.get(columna));
+						}
+						CantReg++;
+					}
+				}
+			}
+		} else {
 			System.out.println("Error: Las dimensiones no coinciden");
 			System.exit(1);
 		}
 		return temporal;
 	}
 
-	Table<Integer, String, String> Producto(Table<Integer, String, String> tabla1,Table<Integer, String, String> tabla2){
+	Table<Integer, String, String> Producto(
+			Table<Integer, String, String> tabla1,
+			Table<Integer, String, String> tabla2) {
 		Table<Integer, String, String> temporal = HashBasedTable.create();
 		int CantReg = 0;
-		
-			for (Integer keyI : tabla1.rowKeySet()) {
-				Map<String, String> map = tabla1.row(keyI);
-				Set<String> set = map.keySet();
-				for (Integer keyD : tabla2.rowKeySet()) {
-					Map<String, String> map2 = tabla2.row(keyD);
-					Set<String> set2 = map2.keySet();
-					if((keyI==keyD)&&(keyI<2&&keyD<2)){
-						for(Iterator<String> it = set.iterator(); it.hasNext();){
+
+		for (Integer keyI : tabla1.rowKeySet()) {
+			Map<String, String> map = tabla1.row(keyI);
+			Set<String> set = map.keySet();
+			for (Integer keyD : tabla2.rowKeySet()) {
+				Map<String, String> map2 = tabla2.row(keyD);
+				Set<String> set2 = map2.keySet();
+				if ((keyI == keyD) && (keyI < 2 && keyD < 2)) {
+					for (Iterator<String> it = set.iterator(); it.hasNext();) {
+						String columna = it.next();
+						temporal.put(CantReg, columna, map.get(columna));
+					}
+					int i = 0;
+					if (keyD == 0) {
+						for (Iterator<String> it = set2.iterator(); it
+								.hasNext();) {
 							String columna = it.next();
-							temporal.put(CantReg,columna,map.get(columna));
+							temporal.put(CantReg, "columna"
+									+ (tabla1.columnKeySet().size() / 3 + i),
+									map2.get(columna));
+							i++;
 						}
-						int i=0;
-						if(keyD==0){
-							for(Iterator<String> it = set2.iterator(); it.hasNext();){
-								String columna = it.next();
-								temporal.put(CantReg,"columna"+(tabla1.columnKeySet().size()/3+i),map2.get(columna));
-								i++;
-							}
-							CantReg++;
+						CantReg++;
+					}
+					int j = 0;
+					if (keyD == 1) {
+						for (Iterator<String> it = set2.iterator(); it
+								.hasNext();) {
+							String columna = it.next();
+							temporal.put(CantReg, "tipo"
+									+ (tabla1.columnKeySet().size() / 3 + j),
+									map2.get(columna));
+							j++;
 						}
-						int j=0;
-						if(keyD==1){
-							for(Iterator<String> it = set2.iterator(); it.hasNext();){
-								String columna = it.next();
-								temporal.put(CantReg,"tipo"+(tabla1.columnKeySet().size()/3+j),map2.get(columna));
-								j++;
-							}
-							CantReg++;
+						CantReg++;
+					}
+				} else {
+					if (keyI >= 2 && keyD >= 2) {
+						for (Iterator<String> it = set.iterator(); it.hasNext();) {
+							String columna = it.next();
+							temporal.put(CantReg, columna, map.get(columna));
 						}
-					}else{
-						if(keyI>=2&&keyD>=2){
-							for(Iterator<String> it = set.iterator(); it.hasNext();){
-								String columna = it.next();
-								temporal.put(CantReg,columna,map.get(columna));
-							}
-							for(Iterator<String> it = set2.iterator(); it.hasNext();){
-								String columna = it.next();
-								temporal.put(CantReg,columna,map2.get(columna));
-							}
-							CantReg++;
+						for (Iterator<String> it = set2.iterator(); it
+								.hasNext();) {
+							String columna = it.next();
+							temporal.put(CantReg, columna, map2.get(columna));
 						}
+						CantReg++;
 					}
 				}
 			}
+		}
 		return temporal;
 	}
-	public List<String> Ordenar(Table<Integer, String, String> tabla){
+
+	public List<String> Ordenar(Table<Integer, String, String> tabla) {
 		List<String> ordenada = new ArrayList<String>();
 		Set<String> set = tabla.row(0).keySet();
 		for (int i = 0; i < set.size(); i++) {
@@ -586,29 +611,29 @@ public class Tablas {
 		}
 		return ordenada;
 	}
-	
+
 	public void mostrar_tablas(Table<Integer, String, String> tabla) {
 		System.out.println(tabla);
 		Collection<String> set = tabla.row(0).values();
 		int cont = 0;
 		String[][] tablas = new String[tabla.rowKeySet().size()][set.size()];
 		for (Iterator<String> it = set.iterator(); it.hasNext();) {
-		String columna = it.next();
-		tablas[0][cont] = columna;
-		for (int i = 2; i < tabla.rowKeySet().size(); i++) {
-		Map<String, String> set2 = tabla.row(i);
+			String columna = it.next();
+			tablas[0][cont] = columna;
+			for (int i = 2; i < tabla.rowKeySet().size(); i++) {
+				Map<String, String> set2 = tabla.row(i);
 
-		tablas[i - 1][cont] = set2.get(columna);
+				tablas[i - 1][cont] = set2.get(columna);
+
+			}
+			cont++;
+		}
+		for (int i = 0; i < tabla.rowKeySet().size() - 1; i++) {
+			System.out.println();
+			for (int j = 0; j < set.size(); j++) {
+				System.out.print(tablas[i][j] + "    ");
+			}
 
 		}
-		cont++;
-		}
-		for (int i = 0; i < tabla.rowKeySet().size()-1; i++) {
-		System.out.println();
-		for (int j = 0; j < set.size(); j++) {
-		System.out.print(tablas[i][j] + "    ");
-		}
-
-		}
-		}
+	}
 }

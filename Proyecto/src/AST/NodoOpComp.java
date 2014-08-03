@@ -6,6 +6,7 @@ public class NodoOpComp extends NodoOperador{
 	NodoBase ParteIzq;
 	NodoBase ParteDer;
 	Table<Integer, String, String> resultado;
+	String nombre_tabla;
 	public NodoOpComp(String tipo, NodoBase parteIzq, NodoBase parteDer) {
 		super(tipo);
 		ParteIzq = parteIzq;
@@ -28,6 +29,12 @@ public class NodoOpComp extends NodoOperador{
 	}
 	public void setResultado(Table<Integer, String, String> resultado) {
 		this.resultado = resultado;
+	}
+	public String getNombre_tabla() {
+		return nombre_tabla;
+	}
+	public void setNombre_tabla(String nombre_tabla) {
+		this.nombre_tabla = nombre_tabla;
 	}
 	
 }
