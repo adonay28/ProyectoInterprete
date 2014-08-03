@@ -544,12 +544,23 @@ public class Tablas {
 							temporal.put(CantReg,columna,map.get(columna));
 						}
 						int i=0;
-						for(Iterator<String> it = set2.iterator(); it.hasNext();){
-							String columna = it.next();
-							temporal.put(CantReg,"columna"+(tabla1.columnKeySet().size()/3+i),map2.get(columna));
-							i++;
+						if(keyD==0){
+							for(Iterator<String> it = set2.iterator(); it.hasNext();){
+								String columna = it.next();
+								temporal.put(CantReg,"columna"+(tabla1.columnKeySet().size()/3+i),map2.get(columna));
+								i++;
+							}
+							CantReg++;
 						}
-						CantReg++;
+						int j=0;
+						if(keyD==1){
+							for(Iterator<String> it = set2.iterator(); it.hasNext();){
+								String columna = it.next();
+								temporal.put(CantReg,"tipo"+(tabla1.columnKeySet().size()/3+j),map2.get(columna));
+								j++;
+							}
+							CantReg++;
+						}
 					}else{
 						if(keyI>=2&&keyD>=2){
 							for(Iterator<String> it = set.iterator(); it.hasNext();){
@@ -577,6 +588,7 @@ public class Tablas {
 	}
 	
 	public void mostrar_tablas(Table<Integer, String, String> tabla) {
+		System.out.println(tabla);
 		Collection<String> set = tabla.row(0).values();
 		int cont = 0;
 		String[][] tablas = new String[tabla.rowKeySet().size()][set.size()];
